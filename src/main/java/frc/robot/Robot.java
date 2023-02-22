@@ -4,12 +4,20 @@
 
 package frc.robot;
 
+import edu.wpi.first.cameraserver.CameraServer;
+
+//import edu.wpi.first.cameraserver.CameraServer;
+
+//import edu.wpi.first.cscore.AxisCamera;
+//import edu.wpi.first.cscore.CameraServerJNI;
 /* commented out imports are not used! 
  * comment back in when ready to use!
  */
 //import edu.wpi.first.networktables.GenericEntry;
 //import edu.wpi.first.networktables.GenericPublisher;
 import edu.wpi.first.math.controller.PIDController;
+//import edu.wpi.first.util.sendable.Sendable;
+//import edu.wpi.first.util.sendable.Sendable;
 //import edu.wpi.first.networktables.NetworkTableEntry;
 //import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -17,18 +25,24 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.motorcontrol.Spark;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+//import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+
 //commented out until needed
 //import java.util.TimerTask;
-
+/* USING SMARTDASHBOARD, not shuffleboard --> comment back in if needed
+import edu.wpi.first.wpilibj.motorcontrol.Spark;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+ */
 import com.ctre.phoenix.sensors.PigeonIMU;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
-import edu.wpi.first.wpilibj.Timer;
+//import edu.wpi.first.wpilibj.motorcontrol.Spark;
 
-//import edu.wpi.first.wpilibj.shuffleboard;
-//import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-//import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.Timer;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -53,14 +67,31 @@ public class Robot extends TimedRobot {
   // might not need these, already exist in a preexisting class for pid loops
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
   // motor initialization
+
+  // base motors
   CANSparkMax left1 = new CANSparkMax(2, MotorType.kBrushless);
   CANSparkMax left2 = new CANSparkMax(3, MotorType.kBrushless);
   CANSparkMax left3 = new CANSparkMax(4, MotorType.kBrushless);
   CANSparkMax right1 = new CANSparkMax(5, MotorType.kBrushless);
   CANSparkMax right2 = new CANSparkMax(6, MotorType.kBrushless);
   CANSparkMax right3 = new CANSparkMax(7, MotorType.kBrushless);
-  XboxController frcController = new XboxController(0);
-  PigeonIMU encoderImu = new PigeonIMU(19);
+
+  // check if brushed or brushless w art
+
+  // everything but intake is brushed, intake will have different motor controller
+
+  CANSparkMax elevatorLeft = new CANSparkMax(9, MotorType.kBrushless);
+  CANSparkMax elevatorRight = new CANSparkMax(10, MotorType.kBrushless);
+
+  // lightstrip/blinkin
+  Spark lightstrip = new Spark(3);
+
+  // controllers
+  XboxController mainDriveController = new XboxController(0);
+  XboxController coDriver = new XboxController(1);
+
+  // pigeon
+  PigeonIMU pigeonIMU = new PigeonIMU(19);
 
   /*
    * public void getYawPitchRoll(double[] ypr)
@@ -84,17 +115,27 @@ public class Robot extends TimedRobot {
    * }
    */
 
+  // set lightstrip colors
+
+  boolean lights = false;
+  double color_val;
+
   // need to determine values for kP kI and kD
+  public void setIntegratorRange(double minimumIntegral, double maximumIntegral) {
+    // LEARN CALCULUS to figure this out live laugh love
+  }
+
   private double kP;
   private double kI;
   private double kD;
   PIDController pid = new PIDController(kP, kI, kD);
-
-  public Robot(double kP, double kI, double kD) {
-    this.kP = kP;
-    this.kI = kI;
-    this.kD = kD;
-  }
+  /*
+   * public Robot(double kP, double kI, double kD) {
+   * this.kP = kP;
+   * this.kI = kI;
+   * this.kD = kD;
+   * }
+   */
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -104,13 +145,30 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotInit() {
+
     m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
     m_chooser.addOption("My Auto", kCustomAuto);
+
+    // ShuffleboardTab mainTab = Shuffleboard.getTab("Smart Dashboard");
     SmartDashboard.putData("Auto choices", m_chooser);
+    CameraServer.startAutomaticCapture();
+
+    SmartDashboard.putNumber("Pigeon", pigeonIMU.getYaw());
+
+    Shuffleboard.getTab("Pigeon Data")
+        .add("Pigeon Data", pigeonIMU.getYaw());
+
+    m_autoSelected = m_chooser.getSelected();
+    m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
+    // SmartDashboard.putNumber("Encoder", encoderImu.getEncoder());
+    System.out.println("Auto selected: " + m_autoSelected);
+
+    // SmartDashboard.putNumber("Encoder", );
     // GOOD ONE PigeonIMU encoderImu = new PigeonIMU(19);
 
     // create shuffleboard (for custom driving)
-    // ShuffleboardTab tab = Shuffleboard.getTab("PigeonIMU");
+    // SmartDashboard.putData("Camera", (Sendable)
+    // CameraServer.startAutomaticCapture());
 
     // set current limits
     left1.setSmartCurrentLimit(50);
@@ -123,6 +181,7 @@ public class Robot extends TimedRobot {
     right1.setInverted(true);
     right2.setInverted(true);
     right3.setInverted(true);
+
   }
 
   /**
@@ -137,6 +196,10 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
+    m_autoSelected = m_chooser.getSelected();
+    m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
+    // SmartDashboard.putNumber("Encoder", encoderImu.getEncoder());
+    System.out.println("Auto selected: " + m_autoSelected);
   }
 
   /**
@@ -159,8 +222,10 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     m_autoSelected = m_chooser.getSelected();
-    // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
+    m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
+    // SmartDashboard.putNumber("Encoder", encoderImu.getEncoder());
     System.out.println("Auto selected: " + m_autoSelected);
+
     // switch (m_autoSelected);
 
     /*
@@ -196,13 +261,24 @@ public class Robot extends TimedRobot {
     timer.reset();
     timer.start();
     // double seconds = time.get();
-    while (timer.get() <= 3.15) {
-      left1.set(-.5);
-      left2.set(-.5);
-      left3.set(-.5);
-      right1.set(-.5);
-      right2.set(-.5);
-      right3.set(-.5);
+
+    // initial speed
+    while (timer.get() <= 1.6) {
+      left1.set(.6);
+      left2.set(.6);
+      left3.set(.6);
+      right1.set(.6);
+      right2.set(.6);
+      right3.set(.6);
+    }
+    // speed slowed down after 1.6 seconds but before 2.75 seconds
+    while (timer.get() >= 1.6 && timer.get() <= 2.75) {
+      left1.set(.2);
+      left2.set(.2);
+      left3.set(.2);
+      right1.set(.2);
+      right2.set(.2);
+      right3.set(.2);
     }
     /*
      * left1.set(pid.calculate(90, encoderImu.getYawPitchRoll(null));
@@ -213,7 +289,7 @@ public class Robot extends TimedRobot {
      * right3.set(pid.calculate(90, encoderImu.getDistance));
      */
 
-    while (timer.get() >= 3.15 && timer.get() <= 15) {
+    while (timer.get() >= 2.75 && timer.get() <= 15) {
       left1.set(0);
       left2.set(0);
       left3.set(0);
@@ -221,13 +297,14 @@ public class Robot extends TimedRobot {
       right2.set(0);
       right3.set(0);
     }
-    timer.stop();
+    // timer.stop();
     left1.set(0);
     left2.set(0);
     left3.set(0);
     right1.set(0);
     right2.set(0);
     right3.set(0);
+    timer.stop();
     // Code to run during autonomous mode goes here
 
     /*
@@ -279,17 +356,69 @@ public class Robot extends TimedRobot {
     right2.set(0);
     right3.set(0);
 
-    if (frcController.getLeftY() >= 0.05 || frcController.getLeftY() <= -0.05) {
-      left1.set(frcController.getLeftY());
-      left2.set(frcController.getLeftY());
-      left3.set(frcController.getLeftY());
+    // Talon ourTalon = new Talon(10);
+
+    if (mainDriveController.getLeftY() >= 0.05 || mainDriveController.getLeftY() <= -0.05) {
+      left1.set(mainDriveController.getLeftY());
+      left2.set(mainDriveController.getLeftY());
+      left3.set(mainDriveController.getLeftY());
     }
-    if (frcController.getRightY() >= 0.05 || frcController.getRightY() <= -0.05) {
-      right1.set(frcController.getRightY());
-      right2.set(frcController.getRightY());
-      right3.set(frcController.getRightY());
+    if (mainDriveController.getRightY() >= 0.05 || mainDriveController.getRightY() <= -0.05) {
+      right1.set(mainDriveController.getRightY());
+      right2.set(mainDriveController.getRightY());
+      right3.set(mainDriveController.getRightY());
     }
 
+    lightstrip.set(0);
+    double color = 0;
+    boolean isPressed = false;
+    int counter = 0;
+
+    if (isPressed = false) {
+      color = 0;
+      lightstrip.set(color);
+    }
+
+    if (mainDriveController.getAButtonPressed()) {
+      isPressed = true;
+      counter = 1;
+    }
+    while (isPressed) {
+      while (color == 1) {
+        color = 0.69;
+        lightstrip.set(color);
+      }
+
+      if (mainDriveController.getAButtonPressed()) {
+        counter++;
+      }
+
+      if (counter == 2) {
+        color = 0.91;
+        lightstrip.set(color);
+        isPressed = false;
+        counter = 0;
+      }
+
+    }
+
+    /*
+     * if (mainDriveController.getAButton() == true) {
+     * lights = !lights;
+     * color = 0.69;
+     * lightstrip.set(color);
+     * }
+     * if (mainDriveController.getAButtonPressed() == true) {
+     * color = 0.91;
+     * lightstrip.set(color);
+     * lights = !lights;
+     * }
+     * 
+     * if (lights == false) {
+     * color = 0;
+     * lightstrip.set(0);
+     * }
+     */
   }
 
   /** This function is called once when the robot is disabled. */
@@ -352,6 +481,7 @@ public class Robot extends TimedRobot {
    * @param setpoint
    * @param currentValue
    * @return
+   * @return
    */
   /*
    * public double calculate(double setpoint, double currentValue) {
@@ -382,3 +512,56 @@ public class Robot extends TimedRobot {
    */
 
 }
+/*
+ * //FOR TALON
+ * 
+ * public class
+ * 
+ * //Put these imports in the import section
+ * import edu.wpi.first.hal.FRCNetComm.tResourceType;
+ * import edu.wpi.first.hal.HAL;
+ * import edu.wpi.first.wpilibj.PWM;
+ * 
+ * import edu.wpi.first.wpilibj.MotorSafety;
+ * import edu.wpi.first.wpilibj.motorcontrol.PWMMotorController;
+ * import edu.wpi.first.wpilibj.motorcontrol.Talon;
+ * //ok so these are what the different values indicate in the spark class and
+ * when we're doing encoder stuff
+ * 
+ * 2.003ms = full "forward"
+ * 1.550ms = the "high end" of the deadband range
+ * 1.500ms = center of the deadband range (off)
+ * 1.460ms = the "low end" of the deadband range
+ * 0.999ms = full "reverse"
+ * 
+ * 
+ * public class PWMSparkMax extends PWMMotorController {
+ * /**
+ * //METHODS !!
+ * public PWMSparkMax(final int channel) {
+ * super("PWMSparkMax", channel);
+ * m_pwm.setBounds(2.003, 1.55, 1.50, 1.46, 0.999);
+ * m_pwm.setPeriodMultiplier(PWM.PeriodMultiplier.k1X);
+ * m_pwm.setSpeed(0.0);
+ * m_pwm.setZeroLatch();
+ * }
+ * 
+ * //MORE METHODS SO YOU CAN ACTUALLY USE THE STUFF ABOVE
+ * 
+ * public void setBounds​(double max, double deadbandMax, double center, double
+ * deadbandMin, double min)
+ * 
+ * //Pneumatics
+ * (We'll need to know where we're using them before we can use this code
+ * without errors)
+ * 
+ * //Imports for pneumatics
+ * import edu.wpi.first.wpilibj.PneumaticsModuleType;
+ * import edu.wpi.first.wpilibj.Solenoid;
+ * 
+ * public class (whatever part we're using)
+ * {
+ * nameForWhateverItDoes = new Solenoid(config.pcm_ID,
+ * PneumaticsModuleType.CTREPCM, config.intake_channel);
+ * }
+ */
