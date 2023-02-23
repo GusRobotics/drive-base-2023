@@ -177,6 +177,9 @@ public class Robot extends TimedRobot {
     right1.setSmartCurrentLimit(50);
     right2.setSmartCurrentLimit(50);
     right3.setSmartCurrentLimit(50);
+
+    elevatorLeft.setSmartCurrentLimit(50);
+    elevatorRight.setSmartCurrentLimit(50);
     // invert right drive
     right1.setInverted(true);
     right2.setInverted(true);
