@@ -16,6 +16,13 @@ import edu.wpi.first.cameraserver.CameraServer;
 //import edu.wpi.first.networktables.GenericEntry;
 //import edu.wpi.first.networktables.GenericPublisher;
 import edu.wpi.first.math.controller.PIDController;
+
+/*PID CONTROL
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.PIDCommand;
+ */
+
 //import edu.wpi.first.util.sendable.Sendable;
 //import edu.wpi.first.util.sendable.Sendable;
 //import edu.wpi.first.networktables.NetworkTableEntry;
@@ -26,6 +33,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
+import edu.wpi.first.wpilibj.motorcontrol.Talon;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 //import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 
@@ -79,6 +87,7 @@ public class Robot extends TimedRobot {
   // check if brushed or brushless w art
 
   // everything but intake is brushed, intake will have different motor controller
+  Talon intake = new Talon(4);
 
   CANSparkMax elevatorLeft = new CANSparkMax(9, MotorType.kBrushless);
   CANSparkMax elevatorRight = new CANSparkMax(10, MotorType.kBrushless);
@@ -372,6 +381,12 @@ public class Robot extends TimedRobot {
       right3.set(mainDriveController.getRightY());
     }
 
+    if (mainDriveController.getXButtonPressed()) {
+      intake.set(0.2);
+    }
+    if (mainDriveController.getBButtonPressed()) {
+      intake.set(0.3);
+    }
     lightstrip.set(0);
     double color = 0;
     boolean isPressed = false;
@@ -437,21 +452,35 @@ public class Robot extends TimedRobot {
   /** This function is called once when test mode is enabled. */
   @Override
   public void testInit() {
+
+    /*
+     * PIDController theLoop = new PIDController(0.05, 00, 0.5);
+     * theLoop.setSetpoint(6.5);
+     * theLoop.setTolerance(0.5);
+     * double position = pigeonIMU.getRoll();
+     * double calculation = theLoop.calculate(position, 6.5);
+     * 
+     * 
+     * PIDCommand work = new PIDCommand(theLoop, pigeonIMU, position, null, null)
+     * 
+     * ((Command) theLoop).execute();
+     * 
+     * if(theLoop.atSetpoint())
+     * {
+     * right1.set(0);
+     * right2.set(0);
+     * right3.set(0);
+     * left1.set(0);
+     * left2.set(0);
+     * left3.set(0);
+     * }
+     */
   }
 
   /** This function is called periodically during test mode. */
   @Override
   public void testPeriodic() {
-    pid.setPID(kP, kI, kDefaultPeriod);
-    pid.setSetpoint(5);
-    if (pid.atSetpoint()) {
-      left1.set(0);
-      left2.set(0);
-      left3.set(0);
-      right1.set(0);
-      right2.set(0);
-      right3.set(0);
-    }
+
   }
 
   /** This function is called once when the robot is first started up. */
