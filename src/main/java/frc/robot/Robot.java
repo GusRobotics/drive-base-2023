@@ -129,23 +129,6 @@ public class Robot extends TimedRobot {
   boolean lights = false;
   double color_val;
 
-  // need to determine values for kP kI and kD
-  public void setIntegratorRange(double minimumIntegral, double maximumIntegral) {
-    // LEARN CALCULUS to figure this out live laugh love
-  }
-
-  private double kP;
-  private double kI;
-  private double kD;
-  PIDController pid = new PIDController(kP, kI, kD);
-  /*
-   * public Robot(double kP, double kI, double kD) {
-   * this.kP = kP;
-   * this.kI = kI;
-   * this.kD = kD;
-   * }
-   */
-
   /**
    * This function is run when the robot is first started up and should be used
    * for any
