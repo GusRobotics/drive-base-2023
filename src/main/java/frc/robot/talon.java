@@ -1,18 +1,20 @@
 // package frc.robot;
 // import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
-/*
- * package frc.robot;
- * 
- * import edu.wpi.first.wpilibj.MotorSafety;
- * import edu.wpi.first.wpilibj.motorcontrol.PWMMotorController;
- * //import edu.wpi.first.wpilibj.motorcontrol.Talon;
- * 
- * //import edu.wpi.first.wpilibj.motorcontrol;
- * import edu.wpi.first.hal.FRCNetComm.tResourceType;
- * import edu.wpi.first.hal.HAL;
- * import edu.wpi.first.wpilibj.PWM;
- */
+package frc.robot;
+
+//import edu.wpi.first.wpilibj.MotorSafety;
+//import edu.wpi.first.wpilibj.motorcontrol.PWMMotorController;
+//import edu.wpi.first.wpilibj.motorcontrol.Talon;
+
+//import edu.wpi.first.wpilibj.motorcontrol;
+//import edu.wpi.first.hal.FRCNetComm.tResourceType;
+
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+
+//import edu.wpi.first.hal.HAL;
+//import edu.wpi.first.wpilibj.PWM;
+
 /*
  * Value meaning2.037ms = full "forward"
  * 1.539ms = the "high end" of the deadband range
@@ -74,12 +76,8 @@
  */
 
 // New talon code
-/*
- * public class Talon{
- * private TalonSRX talon;
- * public Talon(int channel)
- * {
- * talon = new TalonSRX(channel);
- * }
- * }
- */
+public class talon {
+    public talon(int channel) {
+        new TalonSRX(channel);
+    }
+}
