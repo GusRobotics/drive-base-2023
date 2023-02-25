@@ -5,6 +5,9 @@
 package frc.robot;
 
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.Solenoid;
 
 /* commented out imports are not used! 
  * comment back in when ready to use!
@@ -55,6 +58,7 @@ import edu.wpi.first.wpilibj.Timer;
 public class Robot extends TimedRobot {
   private static final String kDefaultAuto = "Default";
   private static final String kCustomAuto = "My Auto";
+  private static final PneumaticsModuleType CTREPCM = null;
   private String m_autoSelected;
 
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
@@ -86,12 +90,10 @@ public class Robot extends TimedRobot {
   // pigeon
   PigeonIMU pigeonIMU = new PigeonIMU(19);
 
-  // pneumatic systems
-
-  // public static final PneumaticsModuleType CTREPCM;
-  // Compressor compressor = new Compressor(CTREPCM);
-  // Compressor compressor = new Compressor(config.pcm_ID,
-  // PneumaticsModuleType.CTREPCM);
+  // pneumatic system
+  final PneumaticsModuleType type = CTREPCM;
+  Compressor compressor = new Compressor(type);
+  Solenoid driveShift = new Solenoid(type, 0);
 
   // set lightstrip colors
 
