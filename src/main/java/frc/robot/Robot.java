@@ -6,23 +6,22 @@ package frc.robot;
 
 import edu.wpi.first.cameraserver.CameraServer;
 
-//import edu.wpi.first.cameraserver.CameraServer;
-
-//import edu.wpi.first.cscore.AxisCamera;
-//import edu.wpi.first.cscore.CameraServerJNI;
 /* commented out imports are not used! 
  * comment back in when ready to use!
  */
 //import edu.wpi.first.networktables.GenericEntry;
 //import edu.wpi.first.networktables.GenericPublisher;
+
+/* 
 import edu.wpi.first.math.controller.PIDController;
 
-/*PID CONTROL
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.PIDCommand;
- */
 
+import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
+*/
 //import edu.wpi.first.util.sendable.Sendable;
 //import edu.wpi.first.util.sendable.Sendable;
 //import edu.wpi.first.networktables.NetworkTableEntry;
@@ -35,15 +34,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj.motorcontrol.Talon;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-//import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 
-//commented out until needed
-//import java.util.TimerTask;
-/* USING SMARTDASHBOARD, not shuffleboard --> comment back in if needed
-import edu.wpi.first.wpilibj.motorcontrol.Spark;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
- */
 import com.ctre.phoenix.sensors.PigeonIMU;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
@@ -65,14 +56,7 @@ public class Robot extends TimedRobot {
   private static final String kDefaultAuto = "Default";
   private static final String kCustomAuto = "My Auto";
   private String m_autoSelected;
-  /*
-   * private double kP;
-   * private double kI;
-   * private double kD;
-   * private double integral;
-   * private double previousError;
-   */
-  // might not need these, already exist in a preexisting class for pid loops
+
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
   // motor initialization
 
@@ -102,27 +86,12 @@ public class Robot extends TimedRobot {
   // pigeon
   PigeonIMU pigeonIMU = new PigeonIMU(19);
 
-  /*
-   * public void getYawPitchRoll(double[] ypr)
-   * {
-   * double[] xyz_dps = new double[3];
-   * encoderImu .getRawGyro(xyz_dps);
-   * 
-   * ypr[0] += xyz_dps[2] * 0.02; // yaw
-   * ypr[1] += xyz_dps[0] * 0.02; // pitch
-   * ypr[2] += xyz_dps[1] * 0.02; // roll
-   * }
-   */
-  /*
-   * public void getYawPitchRoll(double[] ypr) {
-   * double[] xyz_dps = new double[3];
-   * encoderImu.getRawGyro(xyz_dps);
-   * 
-   * ypr[0] += xyz_dps[2] * 0.02; // yaw
-   * ypr[1] += xyz_dps[0] * 0.02; // pitch
-   * ypr[2] += xyz_dps[1] * 0.02; // roll
-   * }
-   */
+  // pneumatic systems
+
+  // public static final PneumaticsModuleType CTREPCM;
+  // Compressor compressor = new Compressor(CTREPCM);
+  // Compressor compressor = new Compressor(config.pcm_ID,
+  // PneumaticsModuleType.CTREPCM);
 
   // set lightstrip colors
 
@@ -157,10 +126,6 @@ public class Robot extends TimedRobot {
 
     // SmartDashboard.putNumber("Encoder", );
     // GOOD ONE PigeonIMU encoderImu = new PigeonIMU(19);
-
-    // create shuffleboard (for custom driving)
-    // SmartDashboard.putData("Camera", (Sendable)
-    // CameraServer.startAutomaticCapture());
 
     // set current limits
     left1.setSmartCurrentLimit(50);
@@ -350,8 +315,6 @@ public class Robot extends TimedRobot {
     right1.set(0);
     right2.set(0);
     right3.set(0);
-
-    // Talon ourTalon = new Talon(10);
 
     if (mainDriveController.getLeftY() >= 0.05 || mainDriveController.getLeftY() <= -0.05) {
       left1.set(mainDriveController.getLeftY());
