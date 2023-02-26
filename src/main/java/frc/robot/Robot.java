@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.PIDCommand;
+//import edu.wpi.first.wpilibj2.command.PIDCommand;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj.motorcontrol.Talon;
@@ -35,39 +35,42 @@ import edu.wpi.first.wpilibj.Timer;
  * project.
  */
 public class Robot extends TimedRobot {
-  private static final String kDefaultAuto = "Default";
-  private static final String kCustomAuto = "My Auto";
+  private static final String kDefaultAuto = "rampAuto";
+  private static final String kleftAuto = "left cube";
+  private static final String kRightAuto = "right cube";
   private static final PneumaticsModuleType CTREPCM = null;
+  // private static final String kCubeAuto = "left cube";
+  // private static final String krightCube = "right cube";
+
   private String m_autoSelected;
 
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
   // motor initialization
 
   // base motors
-  CANSparkMax left1 = new CANSparkMax(2, MotorType.kBrushless);
-  CANSparkMax left2 = new CANSparkMax(3, MotorType.kBrushless);
-  CANSparkMax left3 = new CANSparkMax(4, MotorType.kBrushless);
-  CANSparkMax right1 = new CANSparkMax(5, MotorType.kBrushless);
-  CANSparkMax right2 = new CANSparkMax(6, MotorType.kBrushless);
-  CANSparkMax right3 = new CANSparkMax(7, MotorType.kBrushless);
+  CANSparkMax left1 = new CANSparkMax(9, MotorType.kBrushless);
+  CANSparkMax left2 = new CANSparkMax(11, MotorType.kBrushless);
+  CANSparkMax left3 = new CANSparkMax(15, MotorType.kBrushless);
+  CANSparkMax right1 = new CANSparkMax(10, MotorType.kBrushless);
+  CANSparkMax right2 = new CANSparkMax(1, MotorType.kBrushless);
+  CANSparkMax right3 = new CANSparkMax(8, MotorType.kBrushless);
 
   // check if brushed or brushless w art
 
   // everything but intake is brushed, intake will have different motor controller
   Talon intake = new Talon(4);
 
-  CANSparkMax elevatorLeft = new CANSparkMax(9, MotorType.kBrushless);
-  CANSparkMax elevatorRight = new CANSparkMax(10, MotorType.kBrushless);
+  CANSparkMax elevator = new CANSparkMax(2, MotorType.kBrushless);
 
   // lightstrip/blinkin
-  Spark lightstrip = new Spark(3);
+  Spark lightstrip = new Spark(10);
 
   // controllers
   XboxController mainDriveController = new XboxController(0);
   XboxController coDriver = new XboxController(1);
 
   // pigeon
-  PigeonIMU pigeonIMU = new PigeonIMU(19);
+  PigeonIMU pigeonIMU = new PigeonIMU(0);
 
   // pneumatic system
   final PneumaticsModuleType type = CTREPCM;
@@ -88,13 +91,16 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
 
-    m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
-    m_chooser.addOption("My Auto", kCustomAuto);
+    m_chooser.setDefaultOption("Default Ramp Auto", kDefaultAuto);
+
+    m_chooser.addOption("Right Cube Auto", kRightAuto);
+    m_chooser.addOption("Left cube auto", kleftAuto);
 
     SmartDashboard.putData("Auto choices", m_chooser);
     CameraServer.startAutomaticCapture();
 
-    SmartDashboard.putNumber("Pigeon", pigeonIMU.getYaw());
+    SmartDashboard.putNumber("Pigeon Angle", pigeonIMU.getYaw());
+    SmartDashboard.putNumber("Pigeon Roll", pigeonIMU.getRoll());
 
     Shuffleboard.getTab("Pigeon Data")
         .add("Pigeon Data", pigeonIMU.getYaw());
@@ -115,8 +121,8 @@ public class Robot extends TimedRobot {
     right2.setSmartCurrentLimit(50);
     right3.setSmartCurrentLimit(50);
 
-    elevatorLeft.setSmartCurrentLimit(50);
-    elevatorRight.setSmartCurrentLimit(50);
+    elevator.setSmartCurrentLimit(50);
+
     // invert right drive
     right1.setInverted(true);
     right2.setInverted(true);
@@ -195,7 +201,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousPeriodic() {
     switch (m_autoSelected) {
-      case kCustomAuto:
+      case kleftAuto:
     }
 
     Timer timer = new Timer();
@@ -383,10 +389,20 @@ public class Robot extends TimedRobot {
     PIDController theLoop = new PIDController(0.05, 00, 0.5);
     theLoop.setSetpoint(6.5);
     theLoop.setTolerance(0.5);
-    double position = pigeonIMU.getRoll();
-    double calculation = theLoop.calculate(position, 6.5);
+    theLoop.enableContinuousInput(-1.5, 1.5);
 
-    // PIDCommand work = new PIDCommand(theLoop, pigeonIMU, position, null, null)
+    // double position = pigeonIMU.getRoll();
+    // double calculation = theLoop.calculate(position, 6.5);
+    // final double output = theLoop.accept(0.5);
+
+    // Calculates the outp
+    left1.set(theLoop.calculate(pigeonIMU.getRoll(), theLoop.getSetpoint()));
+    left2.set(theLoop.calculate(pigeonIMU.getRoll(), theLoop.getSetpoint()));
+    left3.set(theLoop.calculate(pigeonIMU.getRoll(), theLoop.getSetpoint()));
+    right1.set(theLoop.calculate(pigeonIMU.getRoll(), theLoop.getSetpoint()));
+    right2.set(theLoop.calculate(pigeonIMU.getRoll(), theLoop.getSetpoint()));
+    right3.set(theLoop.calculate(pigeonIMU.getRoll(), theLoop.getSetpoint()));
+    // PIDCommand work = new PIDCommand(theLoop, pigeonIMU, position, .5, null)
     // pid command class is correct, need to group all motors and specify the
     // setpoint for parameters 4, 5
 
@@ -398,7 +414,7 @@ public class Robot extends TimedRobot {
       left2.set(0);
       left3.set(0);
     }
-
+    theLoop.close();
   }
 
   /** This function is called periodically during test mode. */
