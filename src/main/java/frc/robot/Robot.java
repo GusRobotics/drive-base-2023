@@ -5,34 +5,15 @@
 package frc.robot;
 
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
 
-/* commented out imports are not used! 
- * comment back in when ready to use!
- */
-//import edu.wpi.first.networktables.GenericEntry;
-//import edu.wpi.first.networktables.GenericPublisher;
-
-/* 
-import edu.wpi.first.math.controller.PIDController;
-
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.PIDCommand;
-
-import edu.wpi.first.wpilibj.Compressor;
-import edu.wpi.first.wpilibj.PneumaticsModuleType;
-*/
-//import edu.wpi.first.util.sendable.Sendable;
-//import edu.wpi.first.util.sendable.Sendable;
-//import edu.wpi.first.networktables.NetworkTableEntry;
-//import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
+import edu.wpi.first.wpilibj2.command.PIDCommand;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj.motorcontrol.Talon;
@@ -41,8 +22,6 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import com.ctre.phoenix.sensors.PigeonIMU;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-
-//import edu.wpi.first.wpilibj.motorcontrol.Spark;
 
 import edu.wpi.first.wpilibj.Timer;
 
@@ -112,7 +91,6 @@ public class Robot extends TimedRobot {
     m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
     m_chooser.addOption("My Auto", kCustomAuto);
 
-    // ShuffleboardTab mainTab = Shuffleboard.getTab("Smart Dashboard");
     SmartDashboard.putData("Auto choices", m_chooser);
     CameraServer.startAutomaticCapture();
 
@@ -162,6 +140,7 @@ public class Robot extends TimedRobot {
     m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
     // SmartDashboard.putNumber("Encoder", encoderImu.getEncoder());
     System.out.println("Auto selected: " + m_autoSelected);
+    compressor.enableDigital();
   }
 
   /**
@@ -401,28 +380,25 @@ public class Robot extends TimedRobot {
   @Override
   public void testInit() {
 
-    /*
-     * PIDController theLoop = new PIDController(0.05, 00, 0.5);
-     * theLoop.setSetpoint(6.5);
-     * theLoop.setTolerance(0.5);
-     * double position = pigeonIMU.getRoll();
-     * double calculation = theLoop.calculate(position, 6.5);
-     * 
-     * 
-     * PIDCommand work = new PIDCommand(theLoop, pigeonIMU, position, null, null)
-     * 
-     * ((Command) theLoop).execute();
-     * 
-     * if(theLoop.atSetpoint())
-     * {
-     * right1.set(0);
-     * right2.set(0);
-     * right3.set(0);
-     * left1.set(0);
-     * left2.set(0);
-     * left3.set(0);
-     * }
-     */
+    PIDController theLoop = new PIDController(0.05, 00, 0.5);
+    theLoop.setSetpoint(6.5);
+    theLoop.setTolerance(0.5);
+    double position = pigeonIMU.getRoll();
+    double calculation = theLoop.calculate(position, 6.5);
+
+    // PIDCommand work = new PIDCommand(theLoop, pigeonIMU, position, null, null)
+    // pid command class is correct, need to group all motors and specify the
+    // setpoint for parameters 4, 5
+
+    if (theLoop.atSetpoint()) {
+      right1.set(0);
+      right2.set(0);
+      right3.set(0);
+      left1.set(0);
+      left2.set(0);
+      left3.set(0);
+    }
+
   }
 
   /** This function is called periodically during test mode. */
@@ -440,41 +416,12 @@ public class Robot extends TimedRobot {
   @Override
   public void simulationPeriodic() {
   }
-  /*
-   * public double getDistance() {
-   * GenericEntry yaw = tab.add("Yaw", 0.0).getEntry();
-   * double[] ypr = new double[3];
-   * encoderImu.getYawPitchRoll(ypr);
-   * double distance = yaw.setValue(ypr[0]);
-   * return distance;
-   * 
-   * 
-   * double[] ypr = new double[3];
-   * encoderImu.getYawPitchRoll(ypr);
-   * GenericPublisher yaw;
-   * double distance = yaw.setValue(ypr[0]);
-   * return distance;
-   * 
-   * }
-   */
+
   /**
    * @param setpoint
    * @param currentValue
    * @return
    * @return
-   */
-  /*
-   * public double calculate(double setpoint, double currentValue) {
-   * pid.enableContinuousInput(-180, 180);
-   * double error = setpoint - currentValue;
-   * double integral = error * 0.02;
-   * double previousError;
-   * double derivative = (error - previousError) / 0.02;
-   * previousError = error;
-   * double kP;
-   * return kP * error + kI * integral + kD * derivative;
-   * //currentValue = ((Robot) encoderImu).getDistance();
-   * }
    */
 
   /*
