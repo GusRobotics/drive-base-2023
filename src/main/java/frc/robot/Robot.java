@@ -6,19 +6,23 @@ package frc.robot;
 
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.wpilibj.Compressor;
-import edu.wpi.first.wpilibj.PneumaticsModuleType;
-import edu.wpi.first.wpilibj.Solenoid;
+//import edu.wpi.first.wpilibj.Compressor;
+//import edu.wpi.first.wpilibj.PneumaticsModuleType;
+//import edu.wpi.first.wpilibj.Solenoid;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 //import edu.wpi.first.wpilibj2.command.PIDCommand;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.motorcontrol.PWMTalonFX;
+import edu.wpi.first.wpilibj.motorcontrol.PWMTalonSRX;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
-import edu.wpi.first.wpilibj.motorcontrol.Talon;
+//import edu.wpi.first.wpilibj.motorcontrol.Talon;
+//import edu.wpi.first.wpilibj.motorcontrol.Talon;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.sensors.PigeonIMU;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
@@ -35,10 +39,13 @@ import edu.wpi.first.wpilibj.Timer;
  * project.
  */
 public class Robot extends TimedRobot {
-  private static final String kDefaultAuto = "rampAuto";
-  private static final String kleftAuto = "left cube";
-  private static final String kRightAuto = "right cube";
-  private static final PneumaticsModuleType CTREPCM = null;
+
+  /*
+   * private static final String kDefaultAuto = "rampAuto";
+   * private static final String kleftAuto = "left cube";
+   * private static final String kRightAuto = "right cube";
+   * private static final PneumaticsModuleType CTREPCM = null;
+   */
   // private static final String kCubeAuto = "left cube";
   // private static final String krightCube = "right cube";
 
@@ -58,9 +65,10 @@ public class Robot extends TimedRobot {
   // check if brushed or brushless w art
 
   // everything but intake is brushed, intake will have different motor controller
-  Talon intake = new Talon(4);
 
-  CANSparkMax elevator = new CANSparkMax(2, MotorType.kBrushless);
+  PWMTalonSRX intake = new PWMTalonSRX(1);
+
+  // CANSparkMax elevator = new CANSparkMax(2, MotorType.kBrushless);
 
   // lightstrip/blinkin
   Spark lightstrip = new Spark(10);
@@ -73,10 +81,11 @@ public class Robot extends TimedRobot {
   PigeonIMU pigeonIMU = new PigeonIMU(0);
 
   // pneumatic system
-  final PneumaticsModuleType type = CTREPCM;
-  Compressor compressor = new Compressor(type);
-  Solenoid driveShift = new Solenoid(type, 0);
-
+  /*
+   * final PneumaticsModuleType type = CTREPCM;
+   * Compressor compressor = new Compressor(type);
+   * Solenoid driveShift = new Solenoid(type, 0);
+   */
   // set lightstrip colors
 
   boolean lights = false;
@@ -91,10 +100,10 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
 
-    m_chooser.setDefaultOption("Default Ramp Auto", kDefaultAuto);
+    // m_chooser.setDefaultOption("Default Ramp Auto", kDefaultAuto);
 
-    m_chooser.addOption("Right Cube Auto", kRightAuto);
-    m_chooser.addOption("Left cube auto", kleftAuto);
+    // m_chooser.addOption("Right Cube Auto", kRightAuto);
+    // m_chooser.addOption("Left cube auto", kleftAuto);
 
     SmartDashboard.putData("Auto choices", m_chooser);
     CameraServer.startAutomaticCapture();
@@ -106,7 +115,7 @@ public class Robot extends TimedRobot {
         .add("Pigeon Data", pigeonIMU.getYaw());
 
     m_autoSelected = m_chooser.getSelected();
-    m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
+    // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
     // SmartDashboard.putNumber("Encoder", encoderImu.getEncoder());
     System.out.println("Auto selected: " + m_autoSelected);
 
@@ -121,7 +130,7 @@ public class Robot extends TimedRobot {
     right2.setSmartCurrentLimit(50);
     right3.setSmartCurrentLimit(50);
 
-    elevator.setSmartCurrentLimit(50);
+    // elevator.setSmartCurrentLimit(50);
 
     // invert right drive
     right1.setInverted(true);
@@ -143,10 +152,10 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
     m_autoSelected = m_chooser.getSelected();
-    m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
+    // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
     // SmartDashboard.putNumber("Encoder", encoderImu.getEncoder());
     System.out.println("Auto selected: " + m_autoSelected);
-    compressor.enableDigital();
+    // compressor.enableDigital();
   }
 
   /**
@@ -169,7 +178,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     m_autoSelected = m_chooser.getSelected();
-    m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
+    // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
     // SmartDashboard.putNumber("Encoder", encoderImu.getEncoder());
     System.out.println("Auto selected: " + m_autoSelected);
 
@@ -201,7 +210,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousPeriodic() {
     switch (m_autoSelected) {
-      case kleftAuto:
+      // case kleftAuto:
     }
 
     Timer timer = new Timer();
@@ -370,6 +379,9 @@ public class Robot extends TimedRobot {
      * lightstrip.set(0);
      * }
      */
+  }
+
+  private void ess(double d) {
   }
 
   /** This function is called once when the robot is disabled. */
