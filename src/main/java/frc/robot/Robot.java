@@ -93,6 +93,12 @@ public class Robot extends TimedRobot {
   boolean lights = false;
   double color_val;
 
+  // PID Control Initialization
+  PIDController theLoop = new PIDController(0.05, 00, 0.5);
+  double startYaw = 0;
+  double startRoll = 0;
+  double startPitch = 0;
+
   /**
    * This function is run when the robot is first started up and should be used
    * for any
@@ -433,10 +439,13 @@ public class Robot extends TimedRobot {
   @Override
   public void testInit() {
 
-    PIDController theLoop = new PIDController(0.05, 00, 0.5);
-    theLoop.setSetpoint(6.5);
-    theLoop.setTolerance(0.5);
-    theLoop.enableContinuousInput(-1.5, 1.5);
+    startYaw = pigeonIMU.getYaw();
+    startPitch = pigeonIMU.getPitch();
+    startRoll = pigeonIMU.getRoll();
+
+    theLoop.setSetpoint(startPitch);
+    theLoop.setTolerance(0.25);
+    theLoop.enableContinuousInput(-15, 15);
 
     // double position = pigeonIMU.getRoll();
     // double calculation = theLoop.calculate(position, 6.5);
@@ -467,6 +476,71 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during test mode. */
   @Override
   public void testPeriodic() {
+
+    // Small test implementation for the PID loop:
+
+    if (mainDriveController.getLeftY() >= 0.05 || mainDriveController.getLeftY() <= -0.05) {
+      left1.set(mainDriveController.getLeftY());
+      left2.set(mainDriveController.getLeftY());
+      left3.set(mainDriveController.getLeftY());
+    }
+    if (mainDriveController.getRightY() >= 0.05 || mainDriveController.getRightY() <= -0.05) {
+      right1.set(mainDriveController.getRightY());
+      right2.set(mainDriveController.getRightY());
+      right3.set(mainDriveController.getRightY());
+    }
+
+    // arm extension
+    if (mainDriveController.getXButtonPressed()) {
+      arm.set(-.5);
+    } else if (mainDriveController.getBButtonPressed()) {
+      arm.set(0.5);
+    } else {
+      intake.set(0);
+    }
+
+    // press to shift
+    if (mainDriveController.getRightTriggerAxis() >= 0.05) {
+      driveShift.set(true);
+    } else {
+      driveShift.set(false);
+    }
+
+    // codriver
+    // intake
+    if (coDriver.getLeftTriggerAxis() >= 0.05) {
+      intake.set(-0.75);
+    } else if (coDriver.getRightTriggerAxis() >= 0.05) {
+      intake.set(0.75);
+    } else {
+      intake.set(0);
+    }
+    // elevator
+    if (coDriver.getLeftY() >= 0.05) {
+      elevator.set(0.5);
+    } else if (coDriver.getLeftY() <= -0.05) {
+      elevator.set(-0.5);
+    } else {
+      elevator.set(0);
+    }
+    // arm rotation
+    if (coDriver.getRightY() >= 0.05) {
+      rotIn.set(0.4);
+    } else if (coDriver.getRightY() <= -0.05) {
+      rotIn.set(-0.4);
+    } else {
+      rotIn.set(0);
+    }
+
+    // Activate PID Loop
+    if (mainDriveController.getLeftBumper()) {
+      left1.set(theLoop.calculate(pigeonIMU.getPitch(), theLoop.getSetpoint()));
+      left2.set(theLoop.calculate(pigeonIMU.getPitch(), theLoop.getSetpoint()));
+      left3.set(theLoop.calculate(pigeonIMU.getPitch(), theLoop.getSetpoint()));
+      right1.set(theLoop.calculate(pigeonIMU.getPitch(), theLoop.getSetpoint()));
+      right2.set(theLoop.calculate(pigeonIMU.getPitch(), theLoop.getSetpoint()));
+      right3.set(theLoop.calculate(pigeonIMU.getPitch(), theLoop.getSetpoint()));
+    }
 
   }
 
