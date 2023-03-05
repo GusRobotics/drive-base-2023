@@ -6,23 +6,20 @@ package frc.robot;
 
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.controller.PIDController;
-//import edu.wpi.first.wpilibj.Compressor;
-//import edu.wpi.first.wpilibj.PneumaticsModuleType;
-//import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.Solenoid;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 //import edu.wpi.first.wpilibj2.command.PIDCommand;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.motorcontrol.PWMTalonFX;
-import edu.wpi.first.wpilibj.motorcontrol.PWMTalonSRX;
+
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
-//import edu.wpi.first.wpilibj.motorcontrol.Talon;
-//import edu.wpi.first.wpilibj.motorcontrol.Talon;
+
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.sensors.PigeonIMU;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
@@ -60,15 +57,17 @@ public class Robot extends TimedRobot {
   CANSparkMax left3 = new CANSparkMax(15, MotorType.kBrushless);
   CANSparkMax right1 = new CANSparkMax(10, MotorType.kBrushless);
   CANSparkMax right2 = new CANSparkMax(1, MotorType.kBrushless);
-  CANSparkMax right3 = new CANSparkMax(8, MotorType.kBrushless);
-
-  // check if brushed or brushless w art
+  CANSparkMax right3 = new CANSparkMax(7, MotorType.kBrushless);
 
   // everything but intake is brushed, intake will have different motor controller
 
-  PWMTalonSRX intake = new PWMTalonSRX(1);
+  CANSparkMax intake = new CANSparkMax(2, MotorType.kBrushless);
 
-  // CANSparkMax elevator = new CANSparkMax(2, MotorType.kBrushless);
+  CANSparkMax elevator = new CANSparkMax(14, MotorType.kBrushless);
+
+  CANSparkMax arm = new CANSparkMax(13, MotorType.kBrushless);
+
+  CANSparkMax rotIn = new CANSparkMax(12, MotorType.kBrushless);
 
   // lightstrip/blinkin
   Spark lightstrip = new Spark(10);
@@ -79,6 +78,9 @@ public class Robot extends TimedRobot {
 
   // pigeon
   PigeonIMU pigeonIMU = new PigeonIMU(0);
+
+  Compressor compressor = new Compressor(PneumaticsModuleType.CTREPCM);
+  Solenoid driveShift = new Solenoid(PneumaticsModuleType.CTREPCM, 3);
 
   // pneumatic system
   /*
@@ -323,12 +325,48 @@ public class Robot extends TimedRobot {
       right3.set(mainDriveController.getRightY());
     }
 
+    // arm extension
     if (mainDriveController.getXButtonPressed()) {
-      intake.set(0.2);
+      arm.set(-.5);
+    } else if (mainDriveController.getBButtonPressed()) {
+      arm.set(0.5);
+    } else {
+      intake.set(0);
     }
-    if (mainDriveController.getBButtonPressed()) {
-      intake.set(0.3);
+
+    // press to shift
+    if (mainDriveController.getRightTriggerAxis() >= 0.05) {
+      driveShift.set(true);
+    } else {
+      driveShift.set(false);
     }
+
+    // codriver
+    // intake
+    if (coDriver.getLeftTriggerAxis() >= 0.05) {
+      intake.set(-0.75);
+    } else if (coDriver.getRightTriggerAxis() >= 0.05) {
+      intake.set(0.75);
+    } else {
+      intake.set(0);
+    }
+    // elevator
+    if (coDriver.getLeftY() >= 0.05) {
+      elevator.set(0.5);
+    } else if (coDriver.getLeftY() <= -0.05) {
+      elevator.set(-0.5);
+    } else {
+      elevator.set(0);
+    }
+    // arm rotation
+    if (coDriver.getRightY() >= 0.05) {
+      rotIn.set(0.4);
+    } else if (coDriver.getRightY() <= -0.05) {
+      rotIn.set(-0.4);
+    } else {
+      rotIn.set(0);
+    }
+    // lightstrip
     lightstrip.set(0);
     double color = 0;
     boolean isPressed = false;
@@ -379,9 +417,6 @@ public class Robot extends TimedRobot {
      * lightstrip.set(0);
      * }
      */
-  }
-
-  private void ess(double d) {
   }
 
   /** This function is called once when the robot is disabled. */

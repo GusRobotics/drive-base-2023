@@ -3,17 +3,19 @@
 
 package frc.robot;
 
-//import edu.wpi.first.wpilibj.MotorSafety;
-//import edu.wpi.first.wpilibj.motorcontrol.PWMMotorController;
-//import edu.wpi.first.wpilibj.motorcontrol.Talon;
+// import edu.wpi.first.wpilibj.MotorSafety;
+// import edu.wpi.first.wpilibj.motorcontrol.PWMMotorController;
+// import edu.wpi.first.wpilibj.motorcontrol.Talon;
 
-//import edu.wpi.first.wpilibj.motorcontrol;
-//import edu.wpi.first.hal.FRCNetComm.tResourceType;
+// import edu.wpi.first.wpilibj.motorcontrol;
+// import edu.wpi.first.hal.FRCNetComm.tResourceType;
 
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+// import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
-//import edu.wpi.first.hal.HAL;
-//import edu.wpi.first.wpilibj.PWM;
+// import edu.wpi.first.wpilibj.motorcontrol.PWMTalonSRX;
+
+// import edu.wpi.first.hal.HAL;
+// import edu.wpi.first.wpilibj.PWM;
 
 /*
  * Value meaning2.037ms = full "forward"
@@ -76,8 +78,10 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
  */
 
 // New talon code
-public class talon {
-    public talon(int channel) {
-        new TalonSRX(channel);
-    }
-}
+/*
+ * public class talon {
+ * public talon(int channel) {
+ * new PWMTalonSRX(channel);
+ * }
+ * }
+ */
