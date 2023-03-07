@@ -4,18 +4,20 @@
 
 package frc.robot;
 
+// import java.lang.Math;
+
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
-import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 //import edu.wpi.first.wpilibj2.command.PIDCommand;
 import edu.wpi.first.wpilibj.XboxController;
-
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
 
 import com.ctre.phoenix.sensors.PigeonIMU;
@@ -34,6 +36,9 @@ import edu.wpi.first.wpilibj.Timer;
  * project.
  */
 public class Robot extends TimedRobot {
+
+  int k = 0;
+  int k_new = k;
 
   /*
    * private static final String kDefaultAuto = "rampAuto";
@@ -59,7 +64,7 @@ public class Robot extends TimedRobot {
 
   // everything but intake is brushed, intake will have different motor controller
 
-  // CANSparkMax intake = new CANSparkMax(36, MotorType.kBrushless);
+  CANSparkMax intake = new CANSparkMax(36, MotorType.kBrushless);
 
   CANSparkMax elevator = new CANSparkMax(14, MotorType.kBrushless);
 
@@ -77,8 +82,8 @@ public class Robot extends TimedRobot {
   // pigeon
   PigeonIMU pigeonIMU = new PigeonIMU(19);
 
-  Compressor compressor = new Compressor(PneumaticsModuleType.CTREPCM);
-  Solenoid driveShift = new Solenoid(PneumaticsModuleType.CTREPCM, 2);
+  Compressor compressor = new Compressor(PneumaticsModuleType.REVPH);
+  DoubleSolenoid driveShift = new DoubleSolenoid(2, PneumaticsModuleType.REVPH, 7, 3);
 
   // pneumatic system
   /*
@@ -92,7 +97,7 @@ public class Robot extends TimedRobot {
   double color_val;
 
   // PID Control Initialization
-  PIDController theLoop = new PIDController(0.5, 00, 0.5);
+  PIDController theLoop = new PIDController(0.25, 00, 0.5);
   double startYaw = 0;
   double startRoll = 0;
   double startPitch = 0;
@@ -112,15 +117,16 @@ public class Robot extends TimedRobot {
     // m_chooser.addOption("Left cube auto", kleftAuto);
 
     SmartDashboard.putData("Auto choices", m_chooser);
-    CameraServer.startAutomaticCapture();
+    // CameraServer.startAutomaticCapture();
 
-    // Shuffleboard.getTab("Data")
-    // .add("Pigeon Pitch", pigeonIMU.getPitch());
+    // Enable Compressor
+    compressor.enableAnalog(80, 120);
 
-    // Shuffleboard.getTab("Data")
-    // .add("Calculation", theLoop.calculate(pigeonIMU.getPitch(),
-    // theLoop.getSetpoint()));
+    // Initialize shifting into low gear
+    // Note: kReverse is Low Gear
+    driveShift.set(Value.kReverse);
 
+    // Select Autonomous
     m_autoSelected = m_chooser.getSelected();
     // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
     // SmartDashboard.putNumber("Encoder", encoderImu.getEncoder());
@@ -162,10 +168,19 @@ public class Robot extends TimedRobot {
     // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
     // SmartDashboard.putNumber("Encoder", encoderImu.getEncoder());
     // System.out.println("Auto selected: " + m_autoSelected);
-    // compressor.enableDigital();
+    // compressor.enableAnalog(80, 120);
 
     SmartDashboard.putNumber("Pitch", pigeonIMU.getPitch());
     SmartDashboard.putNumber("Calculation", theLoop.calculate(pigeonIMU.getPitch(), theLoop.getSetpoint()));
+
+    SmartDashboard.putNumber("left1", left1.getOutputCurrent());
+    SmartDashboard.putNumber("left2", left2.getOutputCurrent());
+    SmartDashboard.putNumber("left3", left3.getOutputCurrent());
+    SmartDashboard.putNumber("right1", right1.getOutputCurrent());
+    SmartDashboard.putNumber("right2", right2.getOutputCurrent());
+    SmartDashboard.putNumber("right3", right3.getOutputCurrent());
+
+    k++;
 
   }
 
@@ -223,6 +238,13 @@ public class Robot extends TimedRobot {
     switch (m_autoSelected) {
       // case kleftAuto:
     }
+
+    SmartDashboard.putNumber("left1", left1.getOutputCurrent());
+    SmartDashboard.putNumber("left2", left2.getOutputCurrent());
+    SmartDashboard.putNumber("left3", left3.getOutputCurrent());
+    SmartDashboard.putNumber("right1", right1.getOutputCurrent());
+    SmartDashboard.putNumber("right2", right2.getOutputCurrent());
+    SmartDashboard.putNumber("right3", right3.getOutputCurrent());
 
     Timer timer = new Timer();
     timer.reset();
@@ -317,6 +339,13 @@ public class Robot extends TimedRobot {
      * right3.set(frcController.getRightY());
      */
 
+    SmartDashboard.putNumber("left1", left1.getOutputCurrent());
+    SmartDashboard.putNumber("left2", left2.getOutputCurrent());
+    SmartDashboard.putNumber("left3", left3.getOutputCurrent());
+    SmartDashboard.putNumber("right1", right1.getOutputCurrent());
+    SmartDashboard.putNumber("right2", right2.getOutputCurrent());
+    SmartDashboard.putNumber("right3", right3.getOutputCurrent());
+
     left1.set(0);
     left2.set(0);
     left3.set(0);
@@ -337,19 +366,19 @@ public class Robot extends TimedRobot {
 
     // arm extension
     if (mainDriveController.getXButtonPressed()) {
-      arm.set(-.5);
+      // arm.set(-.5);
     } else if (mainDriveController.getBButtonPressed()) {
-      arm.set(0.5);
+      // arm.set(0.5);
     } else {
       // intake.set(0);
     }
 
     // press to shift
-    if (mainDriveController.getRightTriggerAxis() >= 0.05) {
-      driveShift.set(true);
-    } else {
-      driveShift.set(false);
-    }
+    // if (mainDriveController.getRightTriggerAxis() >= 0.05) {
+    // driveShift.set(true);
+    // } else {
+    // driveShift.set(false);
+    // }
 
     // codriver
     // intake
@@ -438,11 +467,21 @@ public class Robot extends TimedRobot {
   /** This function is called periodically when disabled. */
   @Override
   public void disabledPeriodic() {
+
+    SmartDashboard.putNumber("left1", left1.getOutputCurrent());
+    SmartDashboard.putNumber("left2", left2.getOutputCurrent());
+    SmartDashboard.putNumber("left3", left3.getOutputCurrent());
+    SmartDashboard.putNumber("right1", right1.getOutputCurrent());
+    SmartDashboard.putNumber("right2", right2.getOutputCurrent());
+    SmartDashboard.putNumber("right3", right3.getOutputCurrent());
+
   }
 
   /** This function is called once when test mode is enabled. */
   @Override
   public void testInit() {
+
+    driveShift.set(Value.kReverse);
 
     startYaw = pigeonIMU.getYaw();
     startPitch = pigeonIMU.getPitch();
@@ -456,6 +495,8 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("Calculation", theLoop.calculate(pigeonIMU.getPitch(), theLoop.getSetpoint()));
 
     CameraServer.startAutomaticCapture();
+
+    // compressor.enableAnalog(80, 120);
 
     // double position = pigeonIMU.getRoll();
     // double calculation = theLoop.calculate(position, 6.5);
@@ -487,8 +528,40 @@ public class Robot extends TimedRobot {
   @Override
   public void testPeriodic() {
 
+    // compressor.enableAnalog(80, 120);
+
     SmartDashboard.putNumber("Pitch", pigeonIMU.getPitch());
     SmartDashboard.putNumber("Calculation", theLoop.calculate(pigeonIMU.getPitch(), theLoop.getSetpoint()));
+
+    /*
+     * if (Math.abs(mainDriveController.getLeftY()) >= 0.05 ||
+     * Math.abs(mainDriveController.getRightX()) >= 0.05) {
+     * 
+     * left1.set(mainDriveController.getLeftY() - .4 *
+     * mainDriveController.getRightX());
+     * left2.set(mainDriveController.getLeftY() - .4 *
+     * mainDriveController.getRightX());
+     * left3.set(mainDriveController.getLeftY() - .4 *
+     * mainDriveController.getRightX());
+     * right1.set(mainDriveController.getLeftY() + .4 *
+     * mainDriveController.getRightX());
+     * right2.set(mainDriveController.getLeftY() + .4 *
+     * mainDriveController.getRightX());
+     * right3.set(mainDriveController.getLeftY() + .4 *
+     * mainDriveController.getRightX());
+     * 
+     * } else {
+     * 
+     * left1.set(0);
+     * left2.set(0);
+     * left3.set(0);
+     * right1.set(0);
+     * right2.set(0);
+     * right3.set(0);
+     * 
+     * }
+     * 
+     */
 
     left1.set(0);
     left2.set(0);
@@ -502,36 +575,45 @@ public class Robot extends TimedRobot {
       left2.set(mainDriveController.getLeftY());
       left3.set(mainDriveController.getLeftY());
     }
-    if (mainDriveController.getRightY() >= 0.05 || mainDriveController.getRightY() <= -0.05) {
+    if (mainDriveController.getRightY() >= 0.05 ||
+        mainDriveController.getRightY() <= -0.05) {
       right1.set(mainDriveController.getRightY());
       right2.set(mainDriveController.getRightY());
       right3.set(mainDriveController.getRightY());
     }
 
+    SmartDashboard.putNumber("left1", left1.getOutputCurrent());
+    SmartDashboard.putNumber("left2", left2.getOutputCurrent());
+    SmartDashboard.putNumber("left3", left3.getOutputCurrent());
+    SmartDashboard.putNumber("right1", right1.getOutputCurrent());
+    SmartDashboard.putNumber("right2", right2.getOutputCurrent());
+    SmartDashboard.putNumber("right3", right3.getOutputCurrent());
+
     // arm extension
     if (mainDriveController.getXButtonPressed()) {
-      arm.set(-.5);
+      // arm.set(-.5);
     } else if (mainDriveController.getBButtonPressed()) {
-      arm.set(0.5);
+      // arm.set(0.5);
     } else {
-      arm.set(0);
+      // arm.set(0);
     }
 
     // press to shift
-    if (mainDriveController.getRightTriggerAxis() >= 0.05) {
-      driveShift.set(true);
-    } else {
-      driveShift.set(false);
+    if (mainDriveController.getLeftBumper() && k - k_new >= 50) {
+
+      driveShift.toggle();
+      k_new = k;
+
     }
 
     // codriver
     // intake
     if (coDriver.getLeftTriggerAxis() >= 0.05) {
-      // intake.set(-0.75);
+      intake.set(-0.75);
     } else if (coDriver.getRightTriggerAxis() >= 0.05) {
-      // intake.set(0.75);
+      intake.set(0.75);
     } else {
-      // intake.set(0);
+      intake.set(0);
     }
     // elevator
     if (coDriver.getLeftY() >= 0.05) {
