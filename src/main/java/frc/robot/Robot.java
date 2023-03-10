@@ -368,17 +368,38 @@ public class Robot extends TimedRobot {
       elevator.set(0);
     }
     // arm rotation
-    if (coDriver.getRightY() >= 0.05) {
+    if (mainDriveController.getLeftBumper()) {
       rotIn.set(0.4);
-    } else if (coDriver.getRightY() <= -0.05) {
+    } else if (mainDriveController.getLeftBumper() && rotIn.get() == 0.4) {
       rotIn.set(-0.4);
+    } else if (mainDriveController.getLeftBumper() && rotIn.get() == -0.4) {
+      rotIn.set(0);
     } else {
       rotIn.set(0);
     }
-    driveTrain.arcadeDrive(0.75, 0.75);
-    
-    // Initialize gear state (Low)
-    driveShift.set(Value.kReverse);
+
+    // drivetrain
+    if (mainDriveController.getRightX() >= 0.05 || mainDriveController.getLeftY() >= 0.05) {
+      driveTrain.arcadeDrive(0.75, 0.75);
+    }
+
+    // intake sets (codriver triggers)
+    if (isInputting(coDriver.getLeftTriggerAxis(), 0.05)) {
+      intake.set(-0.50);
+    } else if (isInputting(coDriver.getRightTriggerAxis(), 0.05)) {
+      intake.set(0.50);
+    } else {
+      intake.set(0);
+    }
+
+    // shifting one bd trigger, other trigger putting drive motors into brake
+    // triggers for intake and spit out, xab whatever are for different speeds
+    // shift, brake, stick, arm angles for base
+
+    if (mainDriveController.getLeftBumper() && k - k_new >= 50) {
+      driveShift.toggle();
+      k_new = k;
+    }
     // lightstrip
 
   }
@@ -467,13 +488,6 @@ public class Robot extends TimedRobot {
     // }
 
     // intake
-    if (isInputting(coDriver.getLeftTriggerAxis(), 0.05)) {
-      intake.set(-0.40);
-    } else if (isInputting(coDriver.getRightTriggerAxis(), 0.05)) {
-      intake.set(0.40);
-    } else {
-      intake.set(0);
-    }
 
   }
 
