@@ -153,8 +153,8 @@ public class Robot extends TimedRobot {
     // arm.setSoftLimit(CANSparkMax.SoftLimitDirection.kForward, armUL);
     // arm.setSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, armLL);
 
-    rotIn.setSoftLimit(CANSparkMax.SoftLimitDirection.kForward, wristUL);
-    rotIn.setSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, wristLL);
+    // rotIn.setSoftLimit(CANSparkMax.SoftLimitDirection.kForward, wristUL);
+    // rotIn.setSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, wristLL);
 
     // Set the right drive to be inverted
     rightDrive.setInverted(true);
@@ -175,6 +175,7 @@ public class Robot extends TimedRobot {
     right3.setSmartCurrentLimit(80);
     elevator.setSmartCurrentLimit(80);
     intake.setSmartCurrentLimit(80);
+    rotIn.setSmartCurrentLimit(25);
 
   }
 
@@ -273,29 +274,25 @@ public class Robot extends TimedRobot {
     // SmartDashboard.putNumber("right2", right2.getOutputCurrent());
     // SmartDashboard.putNumber("right3", right3.getOutputCurrent());
 
-    // Timer timer = new Timer();
-    // timer.reset();
-    // timer.start();
-    // double seconds = time.get();
+    Timer timer = new Timer();
+    timer.reset();
+    timer.start();
+    // double seconds = timer.get();
 
+    // create shooting, driving auto
+    // run intake for about a second at 75% power, then drive
     // initial speed
-    // while (timer.get() <= 1.6) {
-    // left1.set(.6);
-    // left2.set(.6);
-    // left3.set(.6);
-    // right1.set(.6);
-    // right2.set(.6);
-    // right3.set(.6);
-    // }
+    if (timer.get() <= 1) {
+      intake.set(-1);
+    } else if (timer.get() > 1 && timer.get() <= 4) {
+      leftDrive.set(.3);
+      rightDrive.set(.3);
+    }
     // // speed slowed down after 1.6 seconds but before 2.75 seconds
-    // while (timer.get() >= 1.6 && timer.get() <= 2.75) {
-    // left1.set(.2);
-    // left2.set(.2);
-    // left3.set(.2);
-    // right1.set(.2);
-    // right2.set(.2);
-    // right3.set(.2);
-    // }
+    else if (timer.get() > 4 && timer.get() <= 4.5) {
+      leftDrive.set(.1);
+      rightDrive.set(.2);
+    }
     // /*
     // * left1.set(pid.calculate(90, encoderImu.getYawPitchRoll(null));
     // * left2.set(pid.calculate(90, encoderImu.getDistance()));
@@ -369,18 +366,23 @@ public class Robot extends TimedRobot {
     }
     // arm rotation
     if (mainDriveController.getLeftBumper()) {
-      rotIn.set(0.4);
-    } else if (mainDriveController.getLeftBumper() && rotIn.get() == 0.4) {
-      rotIn.set(-0.4);
-    } else if (mainDriveController.getLeftBumper() && rotIn.get() == -0.4) {
-      rotIn.set(0);
+      rotIn.set(0.25);
+    } else if (mainDriveController.getLeftTriggerAxis() >= 0.05) {
+      rotIn.set(-.25);
     } else {
       rotIn.set(0);
     }
+    // else if (mainDriveController.getLeftBumper() && rotIn.get() == 0.4) {
+    // rotIn.set(-0.4);
+    // }
+    // else if (mainDriveController.getLeftBumper() && rotIn.get() == -0.4) {
+    // rotIn.set(0);
+    // }
 
     // drivetrain
-    if (mainDriveController.getRightX() >= 0.05 || mainDriveController.getLeftY() >= 0.05) {
-      driveTrain.arcadeDrive(0.75, 0.75);
+    if (mainDriveController.getRightX() >= 0.05 || mainDriveController.getLeftY() >= 0.05
+        || mainDriveController.getLeftY() <= -0.05 || mainDriveController.getRightX() <= -0.05) {
+      driveTrain.arcadeDrive(-(mainDriveController.getRightX()), -(mainDriveController.getLeftY()));
     }
 
     // intake sets (codriver triggers)
@@ -388,6 +390,8 @@ public class Robot extends TimedRobot {
       intake.set(-0.50);
     } else if (isInputting(coDriver.getRightTriggerAxis(), 0.05)) {
       intake.set(0.50);
+    } else if (coDriver.getYButton()) {
+      intake.set(-1);
     } else {
       intake.set(0);
     }
@@ -396,9 +400,12 @@ public class Robot extends TimedRobot {
     // triggers for intake and spit out, xab whatever are for different speeds
     // shift, brake, stick, arm angles for base
 
-    if (mainDriveController.getLeftBumper() && k - k_new >= 50) {
+    // && k - k_new >= 50 if we need toggle
+    if (mainDriveController.getRightTriggerAxis() >= 0.8) {
       driveShift.toggle();
       k_new = k;
+    } else {
+      driveShift.set(Value.kReverse);
     }
     // lightstrip
 
