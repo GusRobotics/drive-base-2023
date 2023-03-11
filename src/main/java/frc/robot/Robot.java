@@ -103,7 +103,7 @@ public class Robot extends TimedRobot {
   // pigeon
   // PigeonIMU pigeonIMU = new PigeonIMU(19);
 
-  Compressor compressor = new Compressor(PneumaticsModuleType.REVPH);
+  Compressor compressor = new Compressor(2, PneumaticsModuleType.REVPH);
   DoubleSolenoid driveShift = new DoubleSolenoid(2, PneumaticsModuleType.REVPH, 7, 3);
 
   // pneumatic system
@@ -293,7 +293,7 @@ public class Robot extends TimedRobot {
     leftDrive.set(0);
 
     if (timer.get() < 1) {
-      intake.set(-.9);
+      intake.set(-.8);
     } else if (timer.get() < 4) {
       leftDrive.set(.3);
       rightDrive.set(-.3);
@@ -387,10 +387,10 @@ public class Robot extends TimedRobot {
       elevator.set(0);
     }
     // arm rotation
-    if (coDriver.getLeftBumper()) {
-      rotIn.set(-0.3);
-    } else if (coDriver.getRightBumper()) {
-      rotIn.set(.3);
+    if (mainDriveController.getLeftBumper()) {
+      rotIn.set(0.3);
+    } else if (mainDriveController.getLeftTriggerAxis() > 0.1) {
+      rotIn.set(-.3);
     } else {
       rotIn.set(0);
     }
@@ -410,22 +410,22 @@ public class Robot extends TimedRobot {
     // -(mainDriveController.getLeftY()));
 
     if (mainDriveController.getLeftY() >= 0.1 || mainDriveController.getLeftY() <= -0.1) {
-      leftDrive.set(mainDriveController.getLeftY() - .1);
+      leftDrive.set(mainDriveController.getLeftY());
     } else {
       leftDrive.set(0);
     }
 
     if (mainDriveController.getRightY() >= 0.1 || mainDriveController.getRightY() <= -0.1) {
-      rightDrive.set(mainDriveController.getRightY() - .1);
+      rightDrive.set(-mainDriveController.getRightY());
     } else {
       rightDrive.set(0);
     }
 
     // intake sets (codriver triggers)
     if (isInputting(coDriver.getLeftTriggerAxis(), 0.05)) {
-      intake.set(-0.50);
+      intake.set(-0.40);
     } else if (isInputting(coDriver.getRightTriggerAxis(), 0.05)) {
-      intake.set(0.50);
+      intake.set(0.4);
     } else if (coDriver.getYButton()) {
       intake.set(-.9);
     } else if (coDriver.getAButton()) {
@@ -441,7 +441,7 @@ public class Robot extends TimedRobot {
     // shift, brake, stick, arm angles for base
 
     // if we need toggle
-    if (mainDriveController.getRightTriggerAxis() >= 0.8 && k - k_new >= 50) {
+    if (mainDriveController.getRightBumper() && k - k_new >= 50) {
       driveShift.toggle();
       k_new = k;
     }
