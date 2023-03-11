@@ -79,7 +79,7 @@ public class Robot extends TimedRobot {
   // controller
 
   Timer timer = new Timer();
-  CANSparkMax intake = new CANSparkMax(36, MotorType.kBrushless);
+  // CANSparkMax intake = new CANSparkMax(36, MotorType.kBrushless);
 
   CANSparkMax elevator = new CANSparkMax(14, MotorType.kBrushless);
   float elevatorLL = 0;
@@ -167,7 +167,7 @@ public class Robot extends TimedRobot {
     right2.setSmartCurrentLimit(80);
     right3.setSmartCurrentLimit(80);
     elevator.setSmartCurrentLimit(80);
-    intake.setSmartCurrentLimit(30);
+    // intake.setSmartCurrentLimit(30);
     rotIn.setSmartCurrentLimit(40);
 
   }
@@ -288,16 +288,21 @@ public class Robot extends TimedRobot {
     // rightDrive.set(.2);
     // }
 
-    intake.set(0);
+    // intake.set(0);
     rightDrive.set(0);
     leftDrive.set(0);
 
-    if (timer.get() < 1) {
-      intake.set(-.8);
-    } else if (timer.get() < 4) {
+    // GOOD AUTO BELOW
+    if (timer.get() < 3) {
       leftDrive.set(.3);
       rightDrive.set(-.3);
-    } else if (timer.get() < 5.5) {
+    } else if (timer.get() < 7) {
+      leftDrive.set(0);
+      rightDrive.set(0);
+    } else if (timer.get() < 8.5) {
+      leftDrive.set(.3);
+      rightDrive.set(-.3);
+    } else if (timer.get() < 10) {
       leftDrive.set(.1);
       rightDrive.set(-.2);
     } else {
@@ -305,6 +310,7 @@ public class Robot extends TimedRobot {
       leftDrive.set(0);
       rightDrive.set(0);
     }
+
     // while (timer.get() <= 1.6) {
     // leftDrive.set(.3);
     // rightDrive.set(-.3);
@@ -410,31 +416,31 @@ public class Robot extends TimedRobot {
     // -(mainDriveController.getLeftY()));
 
     if (mainDriveController.getLeftY() >= 0.1 || mainDriveController.getLeftY() <= -0.1) {
-      leftDrive.set(mainDriveController.getLeftY());
+      leftDrive.set(mainDriveController.getLeftY() - .25);
     } else {
       leftDrive.set(0);
     }
 
     if (mainDriveController.getRightY() >= 0.1 || mainDriveController.getRightY() <= -0.1) {
-      rightDrive.set(-mainDriveController.getRightY());
+      rightDrive.set(-mainDriveController.getRightY() - .25);
     } else {
       rightDrive.set(0);
     }
 
     // intake sets (codriver triggers)
-    if (isInputting(coDriver.getLeftTriggerAxis(), 0.05)) {
-      intake.set(-0.40);
-    } else if (isInputting(coDriver.getRightTriggerAxis(), 0.05)) {
-      intake.set(0.4);
-    } else if (coDriver.getYButton()) {
-      intake.set(-.9);
-    } else if (coDriver.getAButton()) {
-      intake.set(-.3);
-    } else if (coDriver.getBButton()) {
-      intake.set(-.75);
-    } else {
-      intake.set(0);
-    }
+    // if (isInputting(coDriver.getLeftTriggerAxis(), 0.05)) {
+    // intake.set(-0.40);
+    // } else if (isInputting(coDriver.getRightTriggerAxis(), 0.05)) {
+    // intake.set(0.4);
+    // } else if (coDriver.getYButton()) {
+    // intake.set(-.9);
+    // } else if (coDriver.getAButton()) {
+    // intake.set(-.3);
+    // } else if (coDriver.getBButton()) {
+    // intake.set(-.75);
+    // } else {
+    // intake.set(0);
+    // }
 
     // shifting one bd trigger, other trigger putting drive motors into brake
     // triggers for intake and spit out, xab whatever are for different speeds
@@ -469,7 +475,7 @@ public class Robot extends TimedRobot {
     timer.start();
 
     elevator.setIdleMode(IdleMode.kBrake);
-    intake.setIdleMode(IdleMode.kCoast);
+    // intake.setIdleMode(IdleMode.kCoast);
 
     dashboardInitialize();
 
@@ -623,21 +629,21 @@ public class Robot extends TimedRobot {
 
   // A simple method to determine whether or not a particular axis is meant to
   // input
-  private boolean isInputting(double inputAxis, double deadband) {
-    if (adjustForDeadband(inputAxis, deadband) != 0) {
-      return true;
-    }
-    return false;
-  }
+  // private boolean isInputting(double inputAxis, double deadband) {
+  // if (adjustForDeadband(inputAxis, deadband) != 0) {
+  // return true;
+  // }
+  // return false;
+  // }
 
   // Adjusts an input for a particular deadband. Use this to combat input
   // (controller, joystick, etc.) drift.
-  private double adjustForDeadband(double input, double deadband) {
-    if (Math.abs(input) < deadband) {
-      return 0;
-    }
-    return input;
-  }
+  // private double adjustForDeadband(double input, double deadband) {
+  // if (Math.abs(input) < deadband) {
+  // return 0;
+  // }
+  // return input;
+  // }
 
   // Used for SmartDashboard, periodically update entries.
   // This may not be necessary depending on whether or not SmartDashboard
