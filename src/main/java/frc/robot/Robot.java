@@ -22,7 +22,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 //import edu.wpi.first.wpilibj2.command.PIDCommand;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
-import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
@@ -49,16 +48,11 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 public class Robot extends TimedRobot {
 
   // Enum for controlling which mode is passed through to the drive control
-  enum driveMode {
-    tank, twinArcade
-  }
 
   // Enum for controlling which autonomous is run
   enum autos {
     basic
   }
-
-  Timer timer = new Timer();
 
   // Loop iteration variables for time control
   int k = 0;
@@ -81,11 +75,10 @@ public class Robot extends TimedRobot {
   MotorControllerGroup leftDrive = new MotorControllerGroup(left1, left2, left3);
   MotorControllerGroup rightDrive = new MotorControllerGroup(right1, right2, right3);
 
-  DifferentialDrive driveTrain = new DifferentialDrive(leftDrive, rightDrive);
-
   // everything but intake is brushless, intake will have different motor
   // controller
 
+  Timer timer = new Timer();
   CANSparkMax intake = new CANSparkMax(36, MotorType.kBrushless);
 
   CANSparkMax elevator = new CANSparkMax(14, MotorType.kBrushless);
@@ -174,8 +167,8 @@ public class Robot extends TimedRobot {
     right2.setSmartCurrentLimit(80);
     right3.setSmartCurrentLimit(80);
     elevator.setSmartCurrentLimit(80);
-    intake.setSmartCurrentLimit(80);
-    rotIn.setSmartCurrentLimit(25);
+    intake.setSmartCurrentLimit(30);
+    rotIn.setSmartCurrentLimit(40);
 
   }
 
@@ -229,6 +222,8 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
 
+    timer.reset();
+    timer.start();
     // Get the selected auto
     selectedAuto = m_chooser.getSelected();
     System.out.println("Auto selected:" + selectedAuto);
@@ -274,25 +269,52 @@ public class Robot extends TimedRobot {
     // SmartDashboard.putNumber("right2", right2.getOutputCurrent());
     // SmartDashboard.putNumber("right3", right3.getOutputCurrent());
 
-    Timer timer = new Timer();
-    timer.reset();
-    timer.start();
     // double seconds = timer.get();
 
     // create shooting, driving auto
     // run intake for about a second at 75% power, then drive
     // initial speed
-    if (timer.get() <= 1) {
-      intake.set(-1);
-    } else if (timer.get() > 1 && timer.get() <= 4) {
+
+    // while (timer.get() <= 1) {
+    // intake.set(-.75);
+    // }
+    // while (timer.get() > 1 && timer.get() <= 4) {
+    // leftDrive.set(.3);
+    // rightDrive.set(.3);
+    // }
+    // // // speed slowed down after 1.6 seconds but before 2.75 seconds
+    // while (timer.get() > 4 && timer.get() <= 4.5) {
+    // leftDrive.set(.1);
+    // rightDrive.set(.2);
+    // }
+
+    intake.set(0);
+    rightDrive.set(0);
+    leftDrive.set(0);
+
+    if (timer.get() < 1) {
+      intake.set(-.9);
+    } else if (timer.get() < 4) {
       leftDrive.set(.3);
-      rightDrive.set(.3);
-    }
-    // // speed slowed down after 1.6 seconds but before 2.75 seconds
-    else if (timer.get() > 4 && timer.get() <= 4.5) {
+      rightDrive.set(-.3);
+    } else if (timer.get() < 5.5) {
       leftDrive.set(.1);
-      rightDrive.set(.2);
+      rightDrive.set(-.2);
+    } else {
+      timer.stop();
+      leftDrive.set(0);
+      rightDrive.set(0);
     }
+    // while (timer.get() <= 1.6) {
+    // leftDrive.set(.3);
+    // rightDrive.set(-.3);
+    // }
+    // // // speed slowed down after 1.6 seconds but before 2.75 seconds
+    // while (timer.get() > 1.6 && timer.get() <= 3.6) {
+    // leftDrive.set(.1);
+    // rightDrive.set(-.2);
+    // }
+
     // /*
     // * left1.set(pid.calculate(90, encoderImu.getYawPitchRoll(null));
     // * left2.set(pid.calculate(90, encoderImu.getDistance()));
@@ -365,10 +387,10 @@ public class Robot extends TimedRobot {
       elevator.set(0);
     }
     // arm rotation
-    if (mainDriveController.getLeftBumper()) {
-      rotIn.set(0.25);
-    } else if (mainDriveController.getLeftTriggerAxis() >= 0.05) {
-      rotIn.set(-.25);
+    if (coDriver.getLeftBumper()) {
+      rotIn.set(-0.3);
+    } else if (coDriver.getRightBumper()) {
+      rotIn.set(.3);
     } else {
       rotIn.set(0);
     }
@@ -380,9 +402,23 @@ public class Robot extends TimedRobot {
     // }
 
     // drivetrain
-    if (mainDriveController.getRightX() >= 0.05 || mainDriveController.getLeftY() >= 0.05
-        || mainDriveController.getLeftY() <= -0.05 || mainDriveController.getRightX() <= -0.05) {
-      driveTrain.arcadeDrive(-(mainDriveController.getRightX()), -(mainDriveController.getLeftY()));
+    // if (mainDriveController.getRightX() >= 0.05 || mainDriveController.getLeftY()
+    // >= 0.05
+    // || mainDriveController.getLeftY() <= -0.05 || mainDriveController.getRightX()
+    // <= -0.05) {
+    // driveTrain.arcadeDrive(-(mainDriveController.getRightX()),
+    // -(mainDriveController.getLeftY()));
+
+    if (mainDriveController.getLeftY() >= 0.1 || mainDriveController.getLeftY() <= -0.1) {
+      leftDrive.set(mainDriveController.getLeftY() - .1);
+    } else {
+      leftDrive.set(0);
+    }
+
+    if (mainDriveController.getRightY() >= 0.1 || mainDriveController.getRightY() <= -0.1) {
+      rightDrive.set(mainDriveController.getRightY() - .1);
+    } else {
+      rightDrive.set(0);
     }
 
     // intake sets (codriver triggers)
@@ -391,7 +427,11 @@ public class Robot extends TimedRobot {
     } else if (isInputting(coDriver.getRightTriggerAxis(), 0.05)) {
       intake.set(0.50);
     } else if (coDriver.getYButton()) {
-      intake.set(-1);
+      intake.set(-.9);
+    } else if (coDriver.getAButton()) {
+      intake.set(-.3);
+    } else if (coDriver.getBButton()) {
+      intake.set(-.75);
     } else {
       intake.set(0);
     }
@@ -400,12 +440,10 @@ public class Robot extends TimedRobot {
     // triggers for intake and spit out, xab whatever are for different speeds
     // shift, brake, stick, arm angles for base
 
-    // && k - k_new >= 50 if we need toggle
-    if (mainDriveController.getRightTriggerAxis() >= 0.8) {
+    // if we need toggle
+    if (mainDriveController.getRightTriggerAxis() >= 0.8 && k - k_new >= 50) {
       driveShift.toggle();
       k_new = k;
-    } else {
-      driveShift.set(Value.kReverse);
     }
     // lightstrip
 
