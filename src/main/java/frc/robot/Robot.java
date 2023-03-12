@@ -160,13 +160,13 @@ public class Robot extends TimedRobot {
     driveShift.set(Value.kReverse);
 
     // set current limits
-    left1.setSmartCurrentLimit(80);
-    left2.setSmartCurrentLimit(80);
-    left3.setSmartCurrentLimit(80);
-    right1.setSmartCurrentLimit(80);
-    right2.setSmartCurrentLimit(80);
-    right3.setSmartCurrentLimit(80);
-    elevator.setSmartCurrentLimit(80);
+    left1.setSmartCurrentLimit(50);
+    left2.setSmartCurrentLimit(50);
+    left3.setSmartCurrentLimit(50);
+    right1.setSmartCurrentLimit(50);
+    right2.setSmartCurrentLimit(50);
+    right3.setSmartCurrentLimit(50);
+    elevator.setSmartCurrentLimit(50);
     // intake.setSmartCurrentLimit(30);
     rotIn.setSmartCurrentLimit(40);
 
@@ -416,13 +416,13 @@ public class Robot extends TimedRobot {
     // -(mainDriveController.getLeftY()));
 
     if (mainDriveController.getLeftY() >= 0.1 || mainDriveController.getLeftY() <= -0.1) {
-      leftDrive.set(mainDriveController.getLeftY() - .25);
+      leftDrive.set(mainDriveController.getLeftY() - .65);
     } else {
       leftDrive.set(0);
     }
 
     if (mainDriveController.getRightY() >= 0.1 || mainDriveController.getRightY() <= -0.1) {
-      rightDrive.set(-mainDriveController.getRightY() - .25);
+      rightDrive.set(-mainDriveController.getRightY() - .65);
     } else {
       rightDrive.set(0);
     }
