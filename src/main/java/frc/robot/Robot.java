@@ -295,16 +295,16 @@ public class Robot extends TimedRobot {
     // GOOD AUTO BELOW
     if (timer.get() < 3) {
       leftDrive.set(.3);
-      rightDrive.set(-.3);
+      rightDrive.set(-.2);
     } else if (timer.get() < 7) {
       leftDrive.set(0);
       rightDrive.set(0);
     } else if (timer.get() < 8.5) {
       leftDrive.set(.3);
-      rightDrive.set(-.3);
+      rightDrive.set(-.2);
     } else if (timer.get() < 10) {
       leftDrive.set(.1);
-      rightDrive.set(-.2);
+      rightDrive.set(-.1);
     } else {
       timer.stop();
       leftDrive.set(0);
@@ -415,20 +415,32 @@ public class Robot extends TimedRobot {
     // driveTrain.arcadeDrive(-(mainDriveController.getRightX()),
     // -(mainDriveController.getLeftY()));
 
-    double rightSpeed = Math.abs(mainDriveController.getRightY()) - 0.5;
-    double leftSpeed = Math.abs(mainDriveController.getLeftY()) - 0.5;
-    if (mainDriveController.getLeftY() >= 0.05) {
-      leftDrive.set(leftSpeed);
-    } else if (mainDriveController.getLeftY() < -0.05) {
-      leftDrive.set(-leftSpeed);
+    // double rightSpeed = (Math.abs(mainDriveController.getRightY()) - 0.5);
+    // double leftSpeed = (Math.abs(mainDriveController.getLeftY()) - 0.4);
+    // if (mainDriveController.getLeftY() >= 0.1) {
+    // leftDrive.set(leftSpeed);
+    // } else if (mainDriveController.getLeftY() <= -0.1) {
+    // leftDrive.set(-leftSpeed);
+    // } else {
+    // leftDrive.set(0);
+    // }
+
+    // if (mainDriveController.getRightY() >= 0.1) {
+    // rightDrive.set(-rightSpeed);
+    // } else if (mainDriveController.getRightY() <= -0.1) {
+    // rightDrive.set(rightSpeed);
+    // } else {
+    // rightDrive.set(0);
+    // }
+
+    if (mainDriveController.getLeftY() >= 0.1 || mainDriveController.getLeftY() <= -0.1) {
+      leftDrive.set(mainDriveController.getLeftY());
     } else {
       leftDrive.set(0);
     }
 
-    if (mainDriveController.getRightY() >= 0.05) {
-      rightDrive.set(-rightSpeed);
-    } else if (mainDriveController.getRightY() < -0.05) {
-      rightDrive.set(rightSpeed);
+    if (mainDriveController.getRightY() >= 0.1 || mainDriveController.getRightY() <= -0.1) {
+      rightDrive.set(-mainDriveController.getRightY() / 1.1);
     } else {
       rightDrive.set(0);
     }
