@@ -293,18 +293,24 @@ public class Robot extends TimedRobot {
     leftDrive.set(0);
 
     // GOOD AUTO BELOW
-    if (timer.get() < 3) {
-      leftDrive.set(.3);
-      rightDrive.set(-.2);
-    } else if (timer.get() < 7) {
-      leftDrive.set(0);
-      rightDrive.set(0);
-    } else if (timer.get() < 8.5) {
-      leftDrive.set(.3);
-      rightDrive.set(-.2);
-    } else if (timer.get() < 10) {
-      leftDrive.set(.1);
-      rightDrive.set(-.1);
+    if (timer.get() < 0.5) {
+      rotIn.set(-0.1);
+    } else if (timer.get() < 0.75) {
+      rotIn.set(0);
+    } else if (timer.get() < 1.25) {
+      rotIn.set(.1);
+      // } else if (timer.get() < 3) {
+      // leftDrive.set(.3);
+      // rightDrive.set(-.25);
+      // } else if (timer.get() < 7) {
+      // leftDrive.set(0);
+      // rightDrive.set(0);
+      // } else if (timer.get() < 8.5) {
+      // leftDrive.set(.3);
+      // rightDrive.set(-.25);
+      // } else if (timer.get() < 10) {
+      // leftDrive.set(.1);
+      // rightDrive.set(-.15);
     } else {
       timer.stop();
       leftDrive.set(0);
@@ -440,7 +446,7 @@ public class Robot extends TimedRobot {
     }
 
     if (mainDriveController.getRightY() >= 0.1 || mainDriveController.getRightY() <= -0.1) {
-      rightDrive.set(-mainDriveController.getRightY() / 1.1);
+      rightDrive.set(-mainDriveController.getRightY() / 1.06);
     } else {
       rightDrive.set(0);
     }
