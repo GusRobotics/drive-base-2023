@@ -415,14 +415,20 @@ public class Robot extends TimedRobot {
     // driveTrain.arcadeDrive(-(mainDriveController.getRightX()),
     // -(mainDriveController.getLeftY()));
 
-    if (mainDriveController.getLeftY() >= 0.1 || mainDriveController.getLeftY() <= -0.1) {
-      leftDrive.set(mainDriveController.getLeftY() - .65);
+    double rightSpeed = Math.abs(mainDriveController.getRightY()) - 0.5;
+    double leftSpeed = Math.abs(mainDriveController.getLeftY()) - 0.5;
+    if (mainDriveController.getLeftY() >= 0.05) {
+      leftDrive.set(leftSpeed);
+    } else if (mainDriveController.getLeftY() < -0.05) {
+      leftDrive.set(-leftSpeed);
     } else {
       leftDrive.set(0);
     }
 
-    if (mainDriveController.getRightY() >= 0.1 || mainDriveController.getRightY() <= -0.1) {
-      rightDrive.set(-mainDriveController.getRightY() - .65);
+    if (mainDriveController.getRightY() >= 0.05) {
+      rightDrive.set(-rightSpeed);
+    } else if (mainDriveController.getRightY() < -0.05) {
+      rightDrive.set(rightSpeed);
     } else {
       rightDrive.set(0);
     }
