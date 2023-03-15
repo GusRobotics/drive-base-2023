@@ -24,15 +24,19 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
+
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 
 import java.util.Map;
 
+//import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 //import com.ctre.phoenix.sensors.PigeonIMU;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
+import edu.wpi.first.wpilibj.motorcontrol.PWMVictorSPX;
 
 // import edu.wpi.first.wpilibj.Timer;
 
@@ -85,9 +89,9 @@ public class Robot extends TimedRobot {
   float elevatorLL = 0;
   float elevatorUL = 15;
 
-  // CANSparkMax arm = new CANSparkMax(13, MotorType.kBrushless);
-  // float armLL = -10000;
-  // float armUL = 15;
+  CANSparkMax arm = new CANSparkMax(13, MotorType.kBrushless);
+  float armLL = -10000;
+  float armUL = 15;
 
   CANSparkMax rotIn = new CANSparkMax(12, MotorType.kBrushless);
   float wristLL = 0;
@@ -100,6 +104,7 @@ public class Robot extends TimedRobot {
   XboxController mainDriveController = new XboxController(0);
   XboxController coDriver = new XboxController(1);
 
+  PWMVictorSPX intake = new PWMVictorSPX(3);
   // pigeon
   // PigeonIMU pigeonIMU = new PigeonIMU(19);
 
@@ -299,9 +304,9 @@ public class Robot extends TimedRobot {
       rotIn.set(0);
     } else if (timer.get() < 1.25) {
       rotIn.set(.1);
-      // } else if (timer.get() < 3) {
-      // leftDrive.set(.3);
-      // rightDrive.set(-.25);
+    } else if (timer.get() < 2.25) {
+      leftDrive.set(.4);
+      rightDrive.set(-.4);
       // } else if (timer.get() < 7) {
       // leftDrive.set(0);
       // rightDrive.set(0);
@@ -422,7 +427,7 @@ public class Robot extends TimedRobot {
     // -(mainDriveController.getLeftY()));
 
     // double rightSpeed = (Math.abs(mainDriveController.getRightY()) - 0.5);
-    // double leftSpeed = (Math.abs(mainDriveController.getLeftY()) - 0.4);
+    // double leftSpeed = (Math.abs(mainDriveController.getLeftY()) - 0.5);
     // if (mainDriveController.getLeftY() >= 0.1) {
     // leftDrive.set(leftSpeed);
     // } else if (mainDriveController.getLeftY() <= -0.1) {
@@ -432,13 +437,14 @@ public class Robot extends TimedRobot {
     // }
 
     // if (mainDriveController.getRightY() >= 0.1) {
-    // rightDrive.set(-rightSpeed);
+    // rightDrive.set(-rightSpeed / 1.06);
     // } else if (mainDriveController.getRightY() <= -0.1) {
-    // rightDrive.set(rightSpeed);
+    // rightDrive.set(rightSpeed / 1.06);
     // } else {
     // rightDrive.set(0);
     // }
 
+    // good drive function
     if (mainDriveController.getLeftY() >= 0.1 || mainDriveController.getLeftY() <= -0.1) {
       leftDrive.set(mainDriveController.getLeftY());
     } else {
@@ -446,25 +452,31 @@ public class Robot extends TimedRobot {
     }
 
     if (mainDriveController.getRightY() >= 0.1 || mainDriveController.getRightY() <= -0.1) {
-      rightDrive.set(-mainDriveController.getRightY() / 1.06);
+      rightDrive.set(-mainDriveController.getRightY() / 1.1);
     } else {
       rightDrive.set(0);
     }
 
     // intake sets (codriver triggers)
-    // if (isInputting(coDriver.getLeftTriggerAxis(), 0.05)) {
-    // intake.set(-0.40);
-    // } else if (isInputting(coDriver.getRightTriggerAxis(), 0.05)) {
-    // intake.set(0.4);
-    // } else if (coDriver.getYButton()) {
-    // intake.set(-.9);
-    // } else if (coDriver.getAButton()) {
-    // intake.set(-.3);
-    // } else if (coDriver.getBButton()) {
-    // intake.set(-.75);
-    // } else {
-    // intake.set(0);
-    // }
+    if (coDriver.getLeftTriggerAxis() >= 0.1) {
+      intake.set(-0.40);
+    } else if (coDriver.getRightTriggerAxis() >= 0.1) {
+      intake.set(0.4);
+    } else if (coDriver.getYButton()) {
+      intake.set(-.9);
+    } else if (coDriver.getAButton()) {
+      intake.set(-.3);
+    } else if (coDriver.getBButton()) {
+      intake.set(-.75);
+    } else {
+      intake.set(0);
+    }
+
+    if (coDriver.getRightTriggerAxis() > 0.1) {
+      arm.set(-.3);
+    } else {
+      arm.set(0);
+    }
 
     // shifting one bd trigger, other trigger putting drive motors into brake
     // triggers for intake and spit out, xab whatever are for different speeds
