@@ -98,7 +98,7 @@ public class Robot extends TimedRobot {
   float wristUL = 15;
 
   // lightstrip/blinkin
-  Spark lightstrip = new Spark(3);
+  Spark lightstrip = new Spark(2);
 
   // controllers
   XboxController mainDriveController = new XboxController(0);
@@ -304,18 +304,15 @@ public class Robot extends TimedRobot {
       rotIn.set(0);
     } else if (timer.get() < 1.25) {
       rotIn.set(.1);
-    } else if (timer.get() < 2.25) {
-      leftDrive.set(.4);
-      rightDrive.set(-.4);
-      // } else if (timer.get() < 7) {
-      // leftDrive.set(0);
-      // rightDrive.set(0);
-      // } else if (timer.get() < 8.5) {
-      // leftDrive.set(.3);
-      // rightDrive.set(-.25);
-      // } else if (timer.get() < 10) {
-      // leftDrive.set(.1);
-      // rightDrive.set(-.15);
+    } else if (timer.get() < 3.75) {
+      leftDrive.set(.21);
+      rightDrive.set(-.21);
+    } else if (timer.get() < 5.75) {
+      leftDrive.set(0);
+      rightDrive.set(0);
+    } else if (timer.get() < 9) {
+      leftDrive.set(.15);
+      rightDrive.set(-.15);
     } else {
       timer.stop();
       leftDrive.set(0);
@@ -397,9 +394,9 @@ public class Robot extends TimedRobot {
     // codriver
     // elevator
     if (coDriver.getLeftY() >= 0.05) {
-      elevator.set(0.5);
+      elevator.set(1);
     } else if (coDriver.getLeftY() <= -0.05) {
-      elevator.set(-0.5);
+      elevator.set(-1);
     } else {
       elevator.set(0);
     }
