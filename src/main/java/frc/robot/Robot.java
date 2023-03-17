@@ -90,12 +90,12 @@ public class Robot extends TimedRobot {
   float elevatorUL = 7;
 
   CANSparkMax arm = new CANSparkMax(13, MotorType.kBrushless);
-  float armLL = -10000;
+  float armLL = -10;
   float armUL = 15;
 
   CANSparkMax rotIn = new CANSparkMax(12, MotorType.kBrushless);
   float wristLL = 0;
-  float wristUL = 15;
+  float wristUL = 9;
 
   // lightstrip/blinkin
   Spark lightstrip = new Spark(2);
@@ -238,26 +238,6 @@ public class Robot extends TimedRobot {
 
     // switch (m_autoSelected);
 
-    /*
-     * basically talking to brennan , the way to get distance is by having the motor
-     * power be set to 0.5 and then having a certain amount for it to go forward and
-     * then set it to zero
-     */
-
-    /*
-     * while (seconds >= 5) {
-     * left1.set(0);
-     * left2.set(0);
-     * left3.set(0);
-     * right1.set(0);
-     * right2.set(0);
-     * right3.set(0);
-     * }
-     */
-    // Timer timer = new Timer();
-    // timer.reset();
-    // timer.start();
-
   }
 
   /** This function is called periodically during autonomous. */
@@ -297,22 +277,28 @@ public class Robot extends TimedRobot {
     rightDrive.set(0);
     leftDrive.set(0);
 
+    // intake run in reverse for a second
+    // GOOD AUTO: drive foreward at .21 for 2.75 sec,
+    // stop for 1.75 sec
+    // foreward for 3.85 sec at .15
     // GOOD AUTO BELOW
     if (timer.get() < 0.5) {
-      rotIn.set(-0.1);
+      rotIn.set(-0.2);
     } else if (timer.get() < 0.75) {
       rotIn.set(0);
+      intake.set(1);
     } else if (timer.get() < 1.25) {
-      rotIn.set(.1);
+      rotIn.set(0);
+      intake.set(0);
     } else if (timer.get() < 4) {
-      leftDrive.set(.21);
-      rightDrive.set(-.21);
+      leftDrive.set(.1);
+      rightDrive.set(-.1);
     } else if (timer.get() < 5.75) {
       leftDrive.set(0);
       rightDrive.set(0);
     } else if (timer.get() < 9.6) {
-      leftDrive.set(.15);
-      rightDrive.set(-.15);
+      leftDrive.set(.13);
+      rightDrive.set(-.13);
     } else {
       timer.stop();
       leftDrive.set(0);
@@ -338,48 +324,6 @@ public class Robot extends TimedRobot {
     // * right3.set(pid.calculate(90, encoderImu.getDistance));
     // */
 
-    // while (timer.get() >= 2.75 && timer.get() <= 15) {
-    // left1.set(0);
-    // left2.set(0);
-    // left3.set(0);
-    // right1.set(0);
-    // right2.set(0);
-    // right3.set(0);
-    // }
-    // // timer.stop();
-    // left1.set(0);
-    // left2.set(0);
-    // left3.set(0);
-    // right1.set(0);
-    // right2.set(0);
-    // right3.set(0);
-    // timer.stop();
-    // Code to run during autonomous mode goes here
-
-    /*
-     * while (timer.get() < 5.0) {
-     * // Put custom auto code here
-     * // case kDefaultAuto:
-     * // default:
-     * // Put default auto code here
-     * left1.set(0.5);
-     * left2.set(0.5);
-     * left3.set(0.5);
-     * right1.set(0.5);
-     * right2.set(0.5);
-     * right3.set(0.5);
-     * // commented until needed for auto
-     * // double time_stamp = Timer.getFPGATimestamp();
-     * }
-     * while (timer.get() > 5.0)
-     * left1.set(0);
-     * left2.set(0);
-     * left3.set(0);
-     * right1.set(0);
-     * right2.set(0);
-     * right3.set(0);
-     * /*
-     */
   }
 
   /** This function is called once when teleop is enabled. */
@@ -407,9 +351,9 @@ public class Robot extends TimedRobot {
 
     // arm rotation
     if (mainDriveController.getLeftBumper()) {
-      rotIn.set(0.3);
+      rotIn.set(0.20);
     } else if (mainDriveController.getLeftTriggerAxis() > 0.1) {
-      rotIn.set(-.3);
+      rotIn.set(-.20);
     } else if (rotIn.getEncoder().getPosition() <= 2 && mainDriveController.getXButton()) {
       rotIn.set(.25);
     } else {
@@ -466,13 +410,13 @@ public class Robot extends TimedRobot {
 
     // intake sets (codriver triggers)
     if (coDriver.getLeftTriggerAxis() >= 0.1) {
-      intake.set(-.4);
+      intake.set(-.5);
     } else if (coDriver.getRightTriggerAxis() >= 0.1) {
       intake.set(1);
     } else if (coDriver.getYButton()) {
       intake.set(-.9);
     } else if (coDriver.getAButton()) {
-      intake.set(-.3);
+      intake.set(-.6);
     } else if (coDriver.getBButton()) {
       intake.set(-.75);
     } else {
