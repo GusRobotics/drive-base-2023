@@ -283,20 +283,24 @@ public class Robot extends TimedRobot {
     // foreward for 3.85 sec at .15
     // GOOD AUTO BELOW
     if (timer.get() < 0.5) {
-      rotIn.set(-0.2);
-    } else if (timer.get() < 0.75) {
+      rotIn.set(-0.08);
+      // elevator.set(.5);
+    } else if (timer.get() < 1) {
+      // elevator.set(.25);
+    } else if (timer.get() < 2.25) {
       rotIn.set(0);
+      elevator.set(0);
       intake.set(1);
-    } else if (timer.get() < 1.25) {
+    } else if (timer.get() < 2.75) {
       rotIn.set(0);
       intake.set(0);
-    } else if (timer.get() < 4) {
-      leftDrive.set(.1);
-      rightDrive.set(-.1);
-    } else if (timer.get() < 5.75) {
+    } else if (timer.get() < 5.5) {
+      leftDrive.set(.2);
+      rightDrive.set(-.2);
+    } else if (timer.get() < 7.25) {
       leftDrive.set(0);
       rightDrive.set(0);
-    } else if (timer.get() < 9.6) {
+    } else if (timer.get() < 12.75) {
       leftDrive.set(.13);
       rightDrive.set(-.13);
     } else {
@@ -397,13 +401,13 @@ public class Robot extends TimedRobot {
 
     // good drive function
     if (mainDriveController.getLeftY() >= 0.1 || mainDriveController.getLeftY() <= -0.1) {
-      leftDrive.set(mainDriveController.getLeftY());
+      leftDrive.set(mainDriveController.getLeftY() / 1.2);
     } else {
       leftDrive.set(0);
     }
 
     if (mainDriveController.getRightY() >= 0.1 || mainDriveController.getRightY() <= -0.1) {
-      rightDrive.set(-mainDriveController.getRightY() / 1.1);
+      rightDrive.set(-mainDriveController.getRightY() / 1.3);
     } else {
       rightDrive.set(0);
     }
