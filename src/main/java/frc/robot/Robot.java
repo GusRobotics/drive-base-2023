@@ -87,7 +87,7 @@ public class Robot extends TimedRobot {
 
   CANSparkMax elevator = new CANSparkMax(14, MotorType.kBrushless);
   float elevatorLL = 0;
-  float elevatorUL = 15;
+  float elevatorUL = 7;
 
   CANSparkMax arm = new CANSparkMax(13, MotorType.kBrushless);
   float armLL = -10000;
@@ -151,8 +151,8 @@ public class Robot extends TimedRobot {
     // arm.setSoftLimit(CANSparkMax.SoftLimitDirection.kForward, armUL);
     // arm.setSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, armLL);
 
-    // rotIn.setSoftLimit(CANSparkMax.SoftLimitDirection.kForward, wristUL);
-    // rotIn.setSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, wristLL);
+    rotIn.setSoftLimit(CANSparkMax.SoftLimitDirection.kForward, wristUL);
+    rotIn.setSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, wristLL);
 
     // Set the right drive to be inverted
     rightDrive.setInverted(true);
@@ -304,13 +304,13 @@ public class Robot extends TimedRobot {
       rotIn.set(0);
     } else if (timer.get() < 1.25) {
       rotIn.set(.1);
-    } else if (timer.get() < 3.75) {
+    } else if (timer.get() < 4) {
       leftDrive.set(.21);
       rightDrive.set(-.21);
     } else if (timer.get() < 5.75) {
       leftDrive.set(0);
       rightDrive.set(0);
-    } else if (timer.get() < 9) {
+    } else if (timer.get() < 9.6) {
       leftDrive.set(.15);
       rightDrive.set(-.15);
     } else {
@@ -385,6 +385,8 @@ public class Robot extends TimedRobot {
   /** This function is called once when teleop is enabled. */
   @Override
   public void teleopInit() {
+    rotIn.getEncoder().setPosition(0);
+    elevator.getEncoder().setPosition(0);
   }
 
   /** This function is called periodically during operator control. */
@@ -394,20 +396,28 @@ public class Robot extends TimedRobot {
     // codriver
     // elevator
     if (coDriver.getLeftY() >= 0.05) {
-      elevator.set(1);
+      elevator.set(.30);
     } else if (coDriver.getLeftY() <= -0.05) {
-      elevator.set(-1);
+      elevator.set(-.30);
     } else {
       elevator.set(0);
     }
+
+    // for encoder rotations use spark.getEncoder.getPosition()
+
     // arm rotation
     if (mainDriveController.getLeftBumper()) {
       rotIn.set(0.3);
     } else if (mainDriveController.getLeftTriggerAxis() > 0.1) {
       rotIn.set(-.3);
+    } else if (rotIn.getEncoder().getPosition() <= 2 && mainDriveController.getXButton()) {
+      rotIn.set(.25);
     } else {
       rotIn.set(0);
     }
+
+    // if(coDriver.getXButton() && )
+
     // else if (mainDriveController.getLeftBumper() && rotIn.get() == 0.4) {
     // rotIn.set(-0.4);
     // }
@@ -456,9 +466,9 @@ public class Robot extends TimedRobot {
 
     // intake sets (codriver triggers)
     if (coDriver.getLeftTriggerAxis() >= 0.1) {
-      intake.set(-0.40);
+      intake.set(-.4);
     } else if (coDriver.getRightTriggerAxis() >= 0.1) {
-      intake.set(0.4);
+      intake.set(1);
     } else if (coDriver.getYButton()) {
       intake.set(-.9);
     } else if (coDriver.getAButton()) {
