@@ -38,6 +38,7 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.motorcontrol.PWMVictorSPX;
 
+import edu.wpi.first.wpilibj.Solenoid;
 // import edu.wpi.first.wpilibj.Timer;
 
 /**
@@ -89,11 +90,11 @@ public class Robot extends TimedRobot {
   float elevatorLL = 0;
   float elevatorUL = 7;
 
-  CANSparkMax arm = new CANSparkMax(13, MotorType.kBrushless);
+  // CANSparkMax arm = new CANSparkMax(13, MotorType.kBrushless);
   float armLL = -10;
   float armUL = 15;
 
-  CANSparkMax rotIn = new CANSparkMax(12, MotorType.kBrushless);
+  // CANSparkMax rotIn = new CANSparkMax(12, MotorType.kBrushless);
   float wristLL = 0;
   float wristUL = 9;
 
@@ -110,6 +111,8 @@ public class Robot extends TimedRobot {
 
   Compressor compressor = new Compressor(2, PneumaticsModuleType.REVPH);
   DoubleSolenoid driveShift = new DoubleSolenoid(2, PneumaticsModuleType.REVPH, 7, 3);
+  Solenoid drop1 = new Solenoid(PneumaticsModuleType.REVPH, 4);
+  Solenoid drop2 = new Solenoid(PneumaticsModuleType.REVPH, 5);
 
   // pneumatic system
   /*
@@ -151,8 +154,8 @@ public class Robot extends TimedRobot {
     // arm.setSoftLimit(CANSparkMax.SoftLimitDirection.kForward, armUL);
     // arm.setSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, armLL);
 
-    rotIn.setSoftLimit(CANSparkMax.SoftLimitDirection.kForward, wristUL);
-    rotIn.setSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, wristLL);
+    // rotIn.setSoftLimit(CANSparkMax.SoftLimitDirection.kForward, wristUL);
+    // rotIn.setSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, wristLL);
 
     // Set the right drive to be inverted
     rightDrive.setInverted(true);
@@ -173,7 +176,7 @@ public class Robot extends TimedRobot {
     right3.setSmartCurrentLimit(50);
     elevator.setSmartCurrentLimit(50);
     // intake.setSmartCurrentLimit(30);
-    rotIn.setSmartCurrentLimit(40);
+    // rotIn.setSmartCurrentLimit(40);
 
   }
 
@@ -256,23 +259,6 @@ public class Robot extends TimedRobot {
 
     // double seconds = timer.get();
 
-    // create shooting, driving auto
-    // run intake for about a second at 75% power, then drive
-    // initial speed
-
-    // while (timer.get() <= 1) {
-    // intake.set(-.75);
-    // }
-    // while (timer.get() > 1 && timer.get() <= 4) {
-    // leftDrive.set(.3);
-    // rightDrive.set(.3);
-    // }
-    // // // speed slowed down after 1.6 seconds but before 2.75 seconds
-    // while (timer.get() > 4 && timer.get() <= 4.5) {
-    // leftDrive.set(.1);
-    // rightDrive.set(.2);
-    // }
-
     // intake.set(0);
     rightDrive.set(0);
     leftDrive.set(0);
@@ -283,16 +269,16 @@ public class Robot extends TimedRobot {
     // foreward for 3.85 sec at .15
     // GOOD AUTO BELOW
     if (timer.get() < 0.5) {
-      rotIn.set(-0.08);
+      // rotIn.set(-0.08);
       // elevator.set(.5);
     } else if (timer.get() < 1) {
       // elevator.set(.25);
     } else if (timer.get() < 2.25) {
-      rotIn.set(0);
+      // rotIn.set(0);
       elevator.set(0);
       intake.set(1);
     } else if (timer.get() < 2.75) {
-      rotIn.set(0);
+      // rotIn.set(0);
       intake.set(0);
     } else if (timer.get() < 5.5) {
       leftDrive.set(.2);
@@ -300,9 +286,9 @@ public class Robot extends TimedRobot {
     } else if (timer.get() < 7.25) {
       leftDrive.set(0);
       rightDrive.set(0);
-    } else if (timer.get() < 12.75) {
-      leftDrive.set(.13);
-      rightDrive.set(-.13);
+    } else if (timer.get() < 15) {
+      leftDrive.set(.15);
+      rightDrive.set(-.15);
     } else {
       timer.stop();
       leftDrive.set(0);
@@ -333,7 +319,7 @@ public class Robot extends TimedRobot {
   /** This function is called once when teleop is enabled. */
   @Override
   public void teleopInit() {
-    rotIn.getEncoder().setPosition(0);
+    // rotIn.getEncoder().setPosition(0);
     elevator.getEncoder().setPosition(0);
   }
 
@@ -354,49 +340,22 @@ public class Robot extends TimedRobot {
     // for encoder rotations use spark.getEncoder.getPosition()
 
     // arm rotation
-    if (mainDriveController.getLeftBumper()) {
-      rotIn.set(0.20);
-    } else if (mainDriveController.getLeftTriggerAxis() > 0.1) {
-      rotIn.set(-.20);
-    } else if (rotIn.getEncoder().getPosition() <= 2 && mainDriveController.getXButton()) {
-      rotIn.set(.25);
-    } else {
-      rotIn.set(0);
-    }
-
-    // if(coDriver.getXButton() && )
+    // if (mainDriveController.getLeftBumper()) {
+    // rotIn.set(0.20);
+    // } else if (mainDriveController.getLeftTriggerAxis() > 0.1) {
+    // rotIn.set(-.20);
+    // } else if (rotIn.getEncoder().getPosition() <= 2 &&
+    // mainDriveController.getXButton()) {
+    // rotIn.set(.25);
+    // } else {
+    // rotIn.set(0);
+    // }
 
     // else if (mainDriveController.getLeftBumper() && rotIn.get() == 0.4) {
     // rotIn.set(-0.4);
     // }
     // else if (mainDriveController.getLeftBumper() && rotIn.get() == -0.4) {
     // rotIn.set(0);
-    // }
-
-    // drivetrain
-    // if (mainDriveController.getRightX() >= 0.05 || mainDriveController.getLeftY()
-    // >= 0.05
-    // || mainDriveController.getLeftY() <= -0.05 || mainDriveController.getRightX()
-    // <= -0.05) {
-    // driveTrain.arcadeDrive(-(mainDriveController.getRightX()),
-    // -(mainDriveController.getLeftY()));
-
-    // double rightSpeed = (Math.abs(mainDriveController.getRightY()) - 0.5);
-    // double leftSpeed = (Math.abs(mainDriveController.getLeftY()) - 0.5);
-    // if (mainDriveController.getLeftY() >= 0.1) {
-    // leftDrive.set(leftSpeed);
-    // } else if (mainDriveController.getLeftY() <= -0.1) {
-    // leftDrive.set(-leftSpeed);
-    // } else {
-    // leftDrive.set(0);
-    // }
-
-    // if (mainDriveController.getRightY() >= 0.1) {
-    // rightDrive.set(-rightSpeed / 1.06);
-    // } else if (mainDriveController.getRightY() <= -0.1) {
-    // rightDrive.set(rightSpeed / 1.06);
-    // } else {
-    // rightDrive.set(0);
     // }
 
     // good drive function
@@ -427,21 +386,37 @@ public class Robot extends TimedRobot {
       intake.set(0);
     }
 
-    if (coDriver.getRightTriggerAxis() > 0.1) {
-      arm.set(-.3);
-    } else {
-      arm.set(0);
-    }
+    // if (coDriver.getRightTriggerAxis() > 0.1) {
+    // arm.set(-.3);
+    // } else {
+    // arm.set(0);
+    // }
 
     // shifting one bd trigger, other trigger putting drive motors into brake
     // triggers for intake and spit out, xab whatever are for different speeds
     // shift, brake, stick, arm angles for base
 
     // if we need toggle
-    if (mainDriveController.getRightBumper() && k - k_new >= 50) {
-      driveShift.toggle();
-      k_new = k;
+    // if (mainDriveController.getRightBumper() && k - k_new >= 50) {
+    // driveShift.toggle();
+    // k_new = k;
+    // }
+
+    // driveShift.get().equals(DoubleSolenoid.Value.kForward)
+    if (mainDriveController.getRightTriggerAxis() > 0.5) {
+      driveShift.set(DoubleSolenoid.Value.kForward);
+    } else {
+      driveShift.set(DoubleSolenoid.Value.kReverse);
     }
+
+    if (mainDriveController.getLeftTriggerAxis() > 0.5) {
+      drop1.set(true);
+      drop2.set(true);
+    } else {
+      drop1.set(false);
+      drop2.set(false);
+    }
+
     // lightstrip
 
   }
@@ -582,12 +557,6 @@ public class Robot extends TimedRobot {
   // -0.625 * adjustForDeadband(mainDriveController.getLeftY(),
   // 0.05));
   // break;
-  // }
-
-  // // Gear shifting
-  // if (mainDriveController.getLeftBumper() && k - k_new >= 50) {
-  // driveShift.toggle();
-  // k_new = k;
   // }
 
   // // intake
