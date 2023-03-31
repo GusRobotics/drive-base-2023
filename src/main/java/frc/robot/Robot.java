@@ -38,7 +38,7 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.motorcontrol.PWMVictorSPX;
 
-import edu.wpi.first.wpilibj.Solenoid;
+//import edu.wpi.first.wpilibj.Solenoid;
 // import edu.wpi.first.wpilibj.Timer;
 
 /**
@@ -109,10 +109,12 @@ public class Robot extends TimedRobot {
   // pigeon
   // PigeonIMU pigeonIMU = new PigeonIMU(19);
 
+  // module refers to pcm --> always 2 unless we need a second one ig
   Compressor compressor = new Compressor(2, PneumaticsModuleType.REVPH);
   DoubleSolenoid driveShift = new DoubleSolenoid(2, PneumaticsModuleType.REVPH, 7, 3);
-  Solenoid drop1 = new Solenoid(PneumaticsModuleType.REVPH, 4);
-  Solenoid drop2 = new Solenoid(PneumaticsModuleType.REVPH, 5);
+  DoubleSolenoid shooter = new DoubleSolenoid(2, PneumaticsModuleType.REVPH, 5, 4);
+  // Solenoid drop1 = new Solenoid(PneumaticsModuleType.REVPH, 4);
+  // Solenoid drop2 = new Solenoid(PneumaticsModuleType.REVPH, 5);
 
   // pneumatic system
   /*
@@ -409,12 +411,14 @@ public class Robot extends TimedRobot {
       driveShift.set(DoubleSolenoid.Value.kReverse);
     }
 
-    if (mainDriveController.getLeftTriggerAxis() > 0.5) {
-      drop1.set(true);
-      drop2.set(true);
+    // if (mainDriveController.getLeftTriggerAxis() > 0.5) {
+    // shooter.toggle();
+    // }
+
+    if (mainDriveController.getLeftTriggerAxis() > 0.5 && k - k_new >= 50) {
+      shooter.set(DoubleSolenoid.Value.kReverse);
     } else {
-      drop1.set(false);
-      drop2.set(false);
+      shooter.set(DoubleSolenoid.Value.kForward);
     }
 
     // lightstrip
