@@ -11,6 +11,7 @@ package frc.robot;
 // import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
@@ -36,7 +37,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
-import edu.wpi.first.wpilibj.motorcontrol.PWMVictorSPX;
+//import edu.wpi.first.wpilibj.motorcontrol.PWMVictorSPX;
 
 //import edu.wpi.first.wpilibj.Solenoid;
 // import edu.wpi.first.wpilibj.Timer;
@@ -80,11 +81,7 @@ public class Robot extends TimedRobot {
   MotorControllerGroup leftDrive = new MotorControllerGroup(left1, left2, left3);
   MotorControllerGroup rightDrive = new MotorControllerGroup(right1, right2, right3);
 
-  // everything but intake is brushless, intake will have different motor
-  // controller
-
   Timer timer = new Timer();
-  // CANSparkMax intake = new CANSparkMax(36, MotorType.kBrushless);
 
   CANSparkMax elevator = new CANSparkMax(14, MotorType.kBrushless);
   float elevatorLL = 0;
@@ -105,23 +102,17 @@ public class Robot extends TimedRobot {
   XboxController mainDriveController = new XboxController(0);
   XboxController coDriver = new XboxController(1);
 
-  PWMVictorSPX intake = new PWMVictorSPX(3);
-  // pigeon
-  // PigeonIMU pigeonIMU = new PigeonIMU(19);
-
   // module refers to pcm --> always 2 unless we need a second one ig
   Compressor compressor = new Compressor(2, PneumaticsModuleType.REVPH);
   DoubleSolenoid driveShift = new DoubleSolenoid(2, PneumaticsModuleType.REVPH, 7, 3);
   DoubleSolenoid shooter = new DoubleSolenoid(2, PneumaticsModuleType.REVPH, 5, 4);
+  // DoubleSolenoid intakeDrop = new DoubleSolenoid(2, PneumaticsModuleType.REVPH,
+  // , );
   // Solenoid drop1 = new Solenoid(PneumaticsModuleType.REVPH, 4);
   // Solenoid drop2 = new Solenoid(PneumaticsModuleType.REVPH, 5);
 
-  // pneumatic system
-  /*
-   * final PneumaticsModuleType type = CTREPCM;
-   * Compressor compressor = new Compressor(type);
-   * Solenoid driveShift = new Solenoid(type, 0);
-   */
+  CANSparkMax intake = new CANSparkMax(36, MotorType.kBrushless);
+
   // set lightstrip colors
 
   boolean lights = false;
@@ -137,6 +128,7 @@ public class Robot extends TimedRobot {
   // softLimits)
   PIDController functionsController = new PIDController(0.75, 0, -0.25);
 
+  AnalogInput distSensor = new AnalogInput(0);
   double startPitch = 0;
 
   /**
@@ -373,30 +365,38 @@ public class Robot extends TimedRobot {
       rightDrive.set(0);
     }
 
-    // intake sets (codriver triggers)
-    if (coDriver.getLeftTriggerAxis() >= 0.1) {
+    // // intake sets (codriver triggers)
+    // if (coDriver.getLeftTriggerAxis() >= 0.1) {
+    // intake.set(-.5);
+    // } else if (coDriver.getRightTriggerAxis() >= 0.1) {
+    // intake.set(1);
+    // } else if (coDriver.getYButton()) {
+    // intake.set(-.9);
+    // } else if (coDriver.getAButton()) {
+    // intake.set(-.6);
+    // } else if (coDriver.getBButton()) {
+    // intake.set(-.75);
+    // } else {
+    // intake.set(0);
+    // }
+
+    // if the codriver has their button pressed, you can intake when the sensor
+    // isn't triggered or when the main is pressing too
+    if (coDriver.getLeftTriggerAxis() > 0.5) {
+      if (distSensor.getValue() < 100 || mainDriveController.getRightBumper()) {
+        intake.set(.5);
+      }
+      // else if(sensor >= sensor threshold){
+      // intake.set(0);
+      // }
+      else {
+        intake.set(0);
+      }
+    } else if (coDriver.getLeftBumper()) {
       intake.set(-.5);
-    } else if (coDriver.getRightTriggerAxis() >= 0.1) {
-      intake.set(1);
-    } else if (coDriver.getYButton()) {
-      intake.set(-.9);
-    } else if (coDriver.getAButton()) {
-      intake.set(-.6);
-    } else if (coDriver.getBButton()) {
-      intake.set(-.75);
     } else {
       intake.set(0);
     }
-
-    // if (coDriver.getRightTriggerAxis() > 0.1) {
-    // arm.set(-.3);
-    // } else {
-    // arm.set(0);
-    // }
-
-    // shifting one bd trigger, other trigger putting drive motors into brake
-    // triggers for intake and spit out, xab whatever are for different speeds
-    // shift, brake, stick, arm angles for base
 
     // if we need toggle
     // if (mainDriveController.getRightBumper() && k - k_new >= 50) {
@@ -404,16 +404,11 @@ public class Robot extends TimedRobot {
     // k_new = k;
     // }
 
-    // driveShift.get().equals(DoubleSolenoid.Value.kForward)
     if (mainDriveController.getRightTriggerAxis() > 0.5) {
       driveShift.set(DoubleSolenoid.Value.kForward);
     } else {
       driveShift.set(DoubleSolenoid.Value.kReverse);
     }
-
-    // if (mainDriveController.getLeftTriggerAxis() > 0.5) {
-    // shooter.toggle();
-    // }
 
     if (mainDriveController.getLeftTriggerAxis() > 0.5 && k - k_new >= 50) {
       shooter.set(DoubleSolenoid.Value.kReverse);
