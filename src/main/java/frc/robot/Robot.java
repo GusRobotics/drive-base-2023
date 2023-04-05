@@ -34,7 +34,7 @@ import java.util.Map;
 //import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 //import com.ctre.phoenix.sensors.PigeonIMU;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMax.IdleMode;
+//import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 //import edu.wpi.first.wpilibj.motorcontrol.PWMVictorSPX;
@@ -83,10 +83,6 @@ public class Robot extends TimedRobot {
 
   Timer timer = new Timer();
 
-  CANSparkMax elevator = new CANSparkMax(14, MotorType.kBrushless);
-  float elevatorLL = 0;
-  float elevatorUL = 7;
-
   // CANSparkMax arm = new CANSparkMax(13, MotorType.kBrushless);
   float armLL = -10;
   float armUL = 15;
@@ -105,11 +101,8 @@ public class Robot extends TimedRobot {
   // module refers to pcm --> always 2 unless we need a second one ig
   Compressor compressor = new Compressor(2, PneumaticsModuleType.REVPH);
   DoubleSolenoid driveShift = new DoubleSolenoid(2, PneumaticsModuleType.REVPH, 7, 3);
-  DoubleSolenoid shooter = new DoubleSolenoid(2, PneumaticsModuleType.REVPH, 5, 4);
-  // DoubleSolenoid intakeDrop = new DoubleSolenoid(2, PneumaticsModuleType.REVPH,
-  // , );
-  // Solenoid drop1 = new Solenoid(PneumaticsModuleType.REVPH, 4);
-  // Solenoid drop2 = new Solenoid(PneumaticsModuleType.REVPH, 5);
+  DoubleSolenoid shooter = new DoubleSolenoid(2, PneumaticsModuleType.REVPH, 1, 2);
+  DoubleSolenoid intakeDrop = new DoubleSolenoid(2, PneumaticsModuleType.REVPH, 4, 5);
 
   CANSparkMax intake = new CANSparkMax(36, MotorType.kBrushless);
 
@@ -139,18 +132,6 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotInit() {
-
-    // Set the digital limits for each direction of the elevator,
-    // arm, and wrist (rotIn)
-    elevator.setSoftLimit(CANSparkMax.SoftLimitDirection.kForward, elevatorUL);
-    elevator.setSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, elevatorLL);
-
-    // arm.setSoftLimit(CANSparkMax.SoftLimitDirection.kForward, armUL);
-    // arm.setSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, armLL);
-
-    // rotIn.setSoftLimit(CANSparkMax.SoftLimitDirection.kForward, wristUL);
-    // rotIn.setSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, wristLL);
-
     // Set the right drive to be inverted
     rightDrive.setInverted(true);
 
@@ -168,9 +149,6 @@ public class Robot extends TimedRobot {
     right1.setSmartCurrentLimit(50);
     right2.setSmartCurrentLimit(50);
     right3.setSmartCurrentLimit(50);
-    elevator.setSmartCurrentLimit(50);
-    // intake.setSmartCurrentLimit(30);
-    // rotIn.setSmartCurrentLimit(40);
 
   }
 
@@ -262,27 +240,16 @@ public class Robot extends TimedRobot {
     // stop for 1.75 sec
     // foreward for 3.85 sec at .15
     // GOOD AUTO BELOW
-    if (timer.get() < 0.5) {
-      // rotIn.set(-0.08);
-      // elevator.set(.5);
-    } else if (timer.get() < 1) {
-      // elevator.set(.25);
-    } else if (timer.get() < 2.25) {
-      // rotIn.set(0);
-      elevator.set(0);
-      intake.set(1);
-    } else if (timer.get() < 2.75) {
-      // rotIn.set(0);
-      intake.set(0);
-    } else if (timer.get() < 5.5) {
-      leftDrive.set(.2);
-      rightDrive.set(-.2);
-    } else if (timer.get() < 7.25) {
-      leftDrive.set(0);
-      rightDrive.set(0);
-    } else if (timer.get() < 15) {
-      leftDrive.set(.15);
-      rightDrive.set(-.15);
+    if (timer.get() < 1.5) {
+      intakeDrop.set(DoubleSolenoid.Value.kReverse);
+      // might need to switch value depending on command
+    } else if (timer.get() < 2) {
+      shooter.set(DoubleSolenoid.Value.kReverse);
+    } else if (timer.get() < 3.5) {
+      shooter.set(DoubleSolenoid.Value.kForward);
+    } else if (timer.get() < 8.5) {
+      leftDrive.set(-0.2);
+      rightDrive.set(0.2);
     } else {
       timer.stop();
       leftDrive.set(0);
@@ -313,45 +280,13 @@ public class Robot extends TimedRobot {
   /** This function is called once when teleop is enabled. */
   @Override
   public void teleopInit() {
-    // rotIn.getEncoder().setPosition(0);
-    elevator.getEncoder().setPosition(0);
+
   }
 
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-
-    // codriver
-    // elevator
-    if (coDriver.getLeftY() >= 0.05) {
-      elevator.set(.30);
-    } else if (coDriver.getLeftY() <= -0.05) {
-      elevator.set(-.30);
-    } else {
-      elevator.set(0);
-    }
-
     // for encoder rotations use spark.getEncoder.getPosition()
-
-    // arm rotation
-    // if (mainDriveController.getLeftBumper()) {
-    // rotIn.set(0.20);
-    // } else if (mainDriveController.getLeftTriggerAxis() > 0.1) {
-    // rotIn.set(-.20);
-    // } else if (rotIn.getEncoder().getPosition() <= 2 &&
-    // mainDriveController.getXButton()) {
-    // rotIn.set(.25);
-    // } else {
-    // rotIn.set(0);
-    // }
-
-    // else if (mainDriveController.getLeftBumper() && rotIn.get() == 0.4) {
-    // rotIn.set(-0.4);
-    // }
-    // else if (mainDriveController.getLeftBumper() && rotIn.get() == -0.4) {
-    // rotIn.set(0);
-    // }
-
     // good drive function
     if (mainDriveController.getLeftY() >= 0.1 || mainDriveController.getLeftY() <= -0.1) {
       leftDrive.set(mainDriveController.getLeftY() / 1.2);
@@ -365,26 +300,11 @@ public class Robot extends TimedRobot {
       rightDrive.set(0);
     }
 
-    // // intake sets (codriver triggers)
-    // if (coDriver.getLeftTriggerAxis() >= 0.1) {
-    // intake.set(-.5);
-    // } else if (coDriver.getRightTriggerAxis() >= 0.1) {
-    // intake.set(1);
-    // } else if (coDriver.getYButton()) {
-    // intake.set(-.9);
-    // } else if (coDriver.getAButton()) {
-    // intake.set(-.6);
-    // } else if (coDriver.getBButton()) {
-    // intake.set(-.75);
-    // } else {
-    // intake.set(0);
-    // }
-
     // if the codriver has their button pressed, you can intake when the sensor
     // isn't triggered or when the main is pressing too
     if (coDriver.getLeftTriggerAxis() > 0.5) {
-      if (distSensor.getValue() < 100 || mainDriveController.getRightBumper()) {
-        intake.set(.5);
+      if (distSensor.getValue() < 280 || mainDriveController.getRightBumper()) {
+        intake.set(.9);
       }
       // else if(sensor >= sensor threshold){
       // intake.set(0);
@@ -393,7 +313,7 @@ public class Robot extends TimedRobot {
         intake.set(0);
       }
     } else if (coDriver.getLeftBumper()) {
-      intake.set(-.5);
+      intake.set(-1);
     } else {
       intake.set(0);
     }
@@ -410,10 +330,16 @@ public class Robot extends TimedRobot {
       driveShift.set(DoubleSolenoid.Value.kReverse);
     }
 
-    if (mainDriveController.getLeftTriggerAxis() > 0.5 && k - k_new >= 50) {
+    if (mainDriveController.getRightBumper()) {
       shooter.set(DoubleSolenoid.Value.kReverse);
     } else {
       shooter.set(DoubleSolenoid.Value.kForward);
+    }
+
+    if (mainDriveController.getLeftTriggerAxis() > 0.5) {
+      intakeDrop.set(DoubleSolenoid.Value.kReverse);
+    } else {
+      intakeDrop.set(DoubleSolenoid.Value.kForward);
     }
 
     // lightstrip
@@ -439,7 +365,7 @@ public class Robot extends TimedRobot {
     timer.reset();
     timer.start();
 
-    elevator.setIdleMode(IdleMode.kBrake);
+    // elevator.setIdleMode(IdleMode.kBrake);
     // intake.setIdleMode(IdleMode.kCoast);
 
     dashboardInitialize();
