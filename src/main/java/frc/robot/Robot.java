@@ -247,7 +247,7 @@ public class Robot extends TimedRobot {
       shooter.set(DoubleSolenoid.Value.kReverse);
     } else if (timer.get() < 3.5) {
       shooter.set(DoubleSolenoid.Value.kForward);
-    } else if (timer.get() < 8.5) {
+    } else if (timer.get() < 10.5) {
       leftDrive.set(-0.2);
       rightDrive.set(0.2);
     } else {
@@ -312,7 +312,7 @@ public class Robot extends TimedRobot {
       else {
         intake.set(0);
       }
-    } else if (coDriver.getLeftBumper()) {
+    } else if (coDriver.getRightTriggerAxis() > 0.5) {
       intake.set(-1);
     } else {
       intake.set(0);
@@ -330,7 +330,7 @@ public class Robot extends TimedRobot {
       driveShift.set(DoubleSolenoid.Value.kReverse);
     }
 
-    if (mainDriveController.getRightBumper()) {
+    if (coDriver.getRightBumper()) {
       shooter.set(DoubleSolenoid.Value.kReverse);
     } else {
       shooter.set(DoubleSolenoid.Value.kForward);
