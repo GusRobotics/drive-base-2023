@@ -235,22 +235,24 @@ public class Robot extends TimedRobot {
     rightDrive.set(0);
     leftDrive.set(0);
 
-    // intake run in reverse for a second
-    // GOOD AUTO: drive foreward at .21 for 2.75 sec,
-    // stop for 1.75 sec
-    // foreward for 3.85 sec at .15
-    // GOOD AUTO BELOW
-    if (timer.get() < 1.5) {
-      intakeDrop.set(DoubleSolenoid.Value.kReverse);
-      // might need to switch value depending on command
-    } else if (timer.get() < 2) {
-      shooter.set(DoubleSolenoid.Value.kReverse);
-    } else if (timer.get() < 3.5) {
-      shooter.set(DoubleSolenoid.Value.kForward);
-    } else if (timer.get() < 5) {
-      intakeDrop.set(DoubleSolenoid.Value.kReverse);
-      // // 4.25 sec at .4, .25 stop, 2 .4 backwards
-    } // else if (timer.get() < 6.3) {
+    // // intake run in reverse for a second
+    // // GOOD AUTO: drive foreward at .21 for 2.75 sec,
+    // // stop for 1.75 sec
+    // // foreward for 3.85 sec at .15
+    // // GOOD AUTO BELOW
+
+    // AUTO NUMBER ONE BEGINS
+    // if (timer.get() < 1.5) {
+    // intakeDrop.set(DoubleSolenoid.Value.kReverse);
+    // // might need to switch value depending on command
+    // } else if (timer.get() < 2) {
+    // shooter.set(DoubleSolenoid.Value.kReverse);
+    // } else if (timer.get() < 3.5) {
+    // shooter.set(DoubleSolenoid.Value.kForward);
+    // } else if (timer.get() < 5) {
+    // intakeDrop.set(DoubleSolenoid.Value.kReverse);
+    // // // 4.25 sec at .4, .25 stop, 2 .4 backwards
+    // } else if (timer.get() < 6.3) {
     // leftDrive.set(-.55);
     // rightDrive.set(0.55);
     // } else if (timer.get() < 9) {
@@ -259,20 +261,12 @@ public class Robot extends TimedRobot {
     // } else if (timer.get() < 10.15) {
     // leftDrive.set(-0.4);
     // rightDrive.set(0.4);
-    // }
-
-    // BELOW WAS COMMENTED OUT BEFORE
-    // } else if (timer.get() < 10) {
+    // } else {
+    // timer.stop();
     // leftDrive.set(0);
     // rightDrive.set(0);
-    // } else if (timer.get() < 12) {
-    // leftDrive.set(0.4);
-    // rightDrive.set(-0.4);
-    else {
-      timer.stop();
-      leftDrive.set(0);
-      rightDrive.set(0);
-    }
+    // }
+    // AUTO NUMBER ONE ENDS
 
     // while (timer.get() <= 1.6) {
     // leftDrive.set(.3);
@@ -293,7 +287,102 @@ public class Robot extends TimedRobot {
     // * right3.set(pid.calculate(90, encoderImu.getDistance));
     // */
 
+    // AUTO NUMBER TWO BEGINS
+    if (timer.get() < 1.5) {
+      intakeDrop.set(DoubleSolenoid.Value.kReverse);
+    } else if (timer.get() < 2) {
+      shooter.set(DoubleSolenoid.Value.kReverse);
+    } else if (timer.get() < 3.5) {
+      shooter.set(DoubleSolenoid.Value.kForward);
+    } else if (timer.get() < 4) {
+      intakeDrop.set(DoubleSolenoid.Value.kReverse);
+    } else if (timer.get() < 8) {
+      intake.set(.9);
+      leftDrive.set(-.5);
+      rightDrive.set(0.5);
+    } else if (timer.get() < 8.7) {
+      intake.set(.9);
+    } else if (timer.get() < 9.5) {
+      intake.set(0);
+    } else if (timer.get() < 12.5) {
+      intakeDrop.set(DoubleSolenoid.Value.kForward);
+      leftDrive.set(.6);
+      rightDrive.set(-.6);
+    } else if (timer.get() < 13.25) {
+      leftDrive.set(0);
+      rightDrive.set(0);
+    } else if (timer.get() < 13.85) {
+      leftDrive.set(.8);
+      rightDrive.set(.8);
+    } else if (timer.get() < 13.9) {
+      leftDrive.set(0);
+      rightDrive.set(0);
+    } else if (timer.get() < 14.4) {
+      intake.set(-0.9);
+    } else if (timer.get() < 14.9) {
+      intake.set(0);
+      leftDrive.set(-0.5);
+      rightDrive.set(0.5);
+    } else {
+      timer.stop();
+      leftDrive.set(0);
+      rightDrive.set(0);
+    }
+    // AUTO NUMBER TWO ENDS
+
+    // AUTO NUMBER THREE BEGINS
+    // if (timer.get() < 1.5) {
+    // intakeDrop.set(DoubleSolenoid.Value.kReverse);
+    // } else if (timer.get() < 2) {
+    // shooter.set(DoubleSolenoid.Value.kReverse);
+    // } else if (timer.get() < 3.5) {
+    // shooter.set(DoubleSolenoid.Value.kForward);
+    // } else if (timer.get() < 3.75) {
+    // intakeDrop.set(DoubleSolenoid.Value.kReverse);
+    // } else if (timer.get() < 7.75) {
+    // intake.set(.9);
+    // leftDrive.set(-.5);
+    // rightDrive.set(0.5);
+    // } else if (timer.get() < 8.55) {
+    // intake.set(.9);
+    // } else if (timer.get() < 9.25) {
+    // intake.set(0);
+    // } else if (timer.get() < 9.82) {
+    // leftDrive.set(.8);
+    // rightDrive.set(.8);
+    // } else if (timer.get() < 12.82) {
+    // intakeDrop.set(DoubleSolenoid.Value.kForward);
+    // leftDrive.set(-.9);
+    // rightDrive.set(.9);
+    // } else if (timer.get() < 13.5) {
+    // intake.set(-.9);
+    // //BELOW TABBED STAYS COMMENTED
+    // // } else if (timer.get() < 13) {
+    // // leftDrive.set(0);
+    // // rightDrive.set(0);
+    // // } else if (timer.get() < 13.6) {
+    // // leftDrive.set(.8);
+    // // rightDrive.set(.8);
+    // // } else if (timer.get() < 13.65) {
+    // // leftDrive.set(0);
+    // // rightDrive.set(0);
+    // // } else if (timer.get() < 14.14) {
+    // // intake.set(-0.9);
+    // // } else if (timer.get() < 14.65) {
+    // // intake.set(0);
+    // // leftDrive.set(-0.5);
+    // // rightDrive.set(0.5);
+    // //ABOVE TABBED STAY COMMENTED
+    // } else {
+    // timer.stop();
+    // leftDrive.set(0);
+    // rightDrive.set(0);
+    // }
+    // AUTO THREE ENDS
   }
+
+  // spin at tend and do it when we grab the cube
+  // leave arm down and we raise it as we come back
 
   /** This function is called once when teleop is enabled. */
   @Override
