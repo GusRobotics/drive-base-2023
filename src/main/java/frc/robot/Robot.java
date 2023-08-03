@@ -247,19 +247,21 @@ public class Robot extends TimedRobot {
       shooter.set(DoubleSolenoid.Value.kReverse);
     } else if (timer.get() < 3.5) {
       shooter.set(DoubleSolenoid.Value.kForward);
-    } else if (timer.get() < 5.5) {
-      // intakeDrop.set(DoubleSolenoid.Value.kReverse);
-      // 4.25 sec at .4, .25 stop, 2 .4 backwards
-    } else if (timer.get() < 7) {
-      leftDrive.set(-.4);
-      rightDrive.set(0.4);
-    } else if (timer.get() < 9) {
-      leftDrive.set(0);
-      rightDrive.set(0);
-    } else if (timer.get() < 10.15) {
-      leftDrive.set(-0.4);
-      rightDrive.set(0.4);
-    }
+    } else if (timer.get() < 5) {
+      intakeDrop.set(DoubleSolenoid.Value.kReverse);
+      // // 4.25 sec at .4, .25 stop, 2 .4 backwards
+    } // else if (timer.get() < 6.3) {
+    // leftDrive.set(-.55);
+    // rightDrive.set(0.55);
+    // } else if (timer.get() < 9) {
+    // leftDrive.set(0);
+    // rightDrive.set(0);
+    // } else if (timer.get() < 10.15) {
+    // leftDrive.set(-0.4);
+    // rightDrive.set(0.4);
+    // }
+
+    // BELOW WAS COMMENTED OUT BEFORE
     // } else if (timer.get() < 10) {
     // leftDrive.set(0);
     // rightDrive.set(0);
