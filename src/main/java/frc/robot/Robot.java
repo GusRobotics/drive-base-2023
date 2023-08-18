@@ -31,8 +31,10 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 
 import java.util.Map;
 
+// import com.ctre.phoenix.sensors.BasePigeon;
+// import com.ctre.phoenix.sensors.Pigeon2;
+import com.ctre.phoenix.sensors.PigeonIMU;
 //import com.ctre.phoenix.motorcontrol.can.VictorSPX;
-//import com.ctre.phoenix.sensors.PigeonIMU;
 import com.revrobotics.CANSparkMax;
 //import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
@@ -101,10 +103,14 @@ public class Robot extends TimedRobot {
   // module refers to pcm --> always 2 unless we need a second one ig
   Compressor compressor = new Compressor(2, PneumaticsModuleType.REVPH);
   DoubleSolenoid driveShift = new DoubleSolenoid(2, PneumaticsModuleType.REVPH, 7, 3);
-  DoubleSolenoid shooter = new DoubleSolenoid(2, PneumaticsModuleType.REVPH, 1, 2);
-  DoubleSolenoid intakeDrop = new DoubleSolenoid(2, PneumaticsModuleType.REVPH, 4, 5);
+  // DoubleSolenoid shooter = new DoubleSolenoid(2, PneumaticsModuleType.REVPH, 1,
+  // 2);
+  // DoubleSolenoid intakeDrop = new DoubleSolenoid(2, PneumaticsModuleType.REVPH,
+  // 4, 5);
 
-  CANSparkMax intake = new CANSparkMax(36, MotorType.kBrushless);
+  PigeonIMU pigeon = new PigeonIMU(10);
+
+  // CANSparkMax intake = new CANSparkMax(36, MotorType.kBrushless);
 
   // set lightstrip colors
 
@@ -136,7 +142,7 @@ public class Robot extends TimedRobot {
     rightDrive.setInverted(true);
 
     // Enable Compressor
-    compressor.enableAnalog(80, 120);
+    compressor.enableAnalog(100, 120);
 
     // Initialize shifting into low gear
     // Note: kReverse is Low Gear
@@ -289,23 +295,23 @@ public class Robot extends TimedRobot {
 
     // AUTO NUMBER TWO BEGINS
     if (timer.get() < 1.5) {
-      intakeDrop.set(DoubleSolenoid.Value.kReverse);
+      // intakeDrop.set(DoubleSolenoid.Value.kReverse);
     } else if (timer.get() < 2) {
-      shooter.set(DoubleSolenoid.Value.kReverse);
+      // shooter.set(DoubleSolenoid.Value.kReverse);
     } else if (timer.get() < 3.5) {
-      shooter.set(DoubleSolenoid.Value.kForward);
+      // shooter.set(DoubleSolenoid.Value.kForward);
     } else if (timer.get() < 4) {
-      intakeDrop.set(DoubleSolenoid.Value.kReverse);
+      // intakeDrop.set(DoubleSolenoid.Value.kReverse);
     } else if (timer.get() < 8) {
-      intake.set(.9);
+      // intake.set(.9);
       leftDrive.set(-.5);
       rightDrive.set(0.5);
     } else if (timer.get() < 8.7) {
-      intake.set(.9);
+      // intake.set(.9);
     } else if (timer.get() < 9.5) {
-      intake.set(0);
+      // intake.set(0);
     } else if (timer.get() < 12.5) {
-      intakeDrop.set(DoubleSolenoid.Value.kForward);
+      // intakeDrop.set(DoubleSolenoid.Value.kForward);
       leftDrive.set(.6);
       rightDrive.set(-.6);
     } else if (timer.get() < 13.25) {
@@ -318,9 +324,9 @@ public class Robot extends TimedRobot {
       leftDrive.set(0);
       rightDrive.set(0);
     } else if (timer.get() < 14.4) {
-      intake.set(-0.9);
+      // intake.set(-0.9);
     } else if (timer.get() < 14.9) {
-      intake.set(0);
+      // intake.set(0);
       leftDrive.set(-0.5);
       rightDrive.set(0.5);
     } else {
@@ -411,18 +417,18 @@ public class Robot extends TimedRobot {
     // isn't triggered or when the main is pressing too
     if (coDriver.getLeftTriggerAxis() > 0.5) {
       if (distSensor.getValue() < 280 || mainDriveController.getRightBumper()) {
-        intake.set(.9);
+        // intake.set(.9);
       }
       // else if(sensor >= sensor threshold){
       // intake.set(0);
       // }
       else {
-        intake.set(0);
+        // intake.set(0);
       }
     } else if (coDriver.getRightTriggerAxis() > 0.5) {
-      intake.set(-1);
+      // intake.set(-1);
     } else {
-      intake.set(0);
+      // intake.set(0);
     }
 
     // if we need toggle
@@ -437,17 +443,17 @@ public class Robot extends TimedRobot {
       driveShift.set(DoubleSolenoid.Value.kReverse);
     }
 
-    if (coDriver.getRightBumper()) {
-      shooter.set(DoubleSolenoid.Value.kReverse);
-    } else {
-      shooter.set(DoubleSolenoid.Value.kForward);
-    }
+    // if (coDriver.getRightBumper()) {
+    // shooter.set(DoubleSolenoid.Value.kReverse);
+    // } else {
+    // shooter.set(DoubleSolenoid.Value.kForward);
+    // }
 
-    if (mainDriveController.getLeftTriggerAxis() > 0.5) {
-      intakeDrop.set(DoubleSolenoid.Value.kReverse);
-    } else {
-      intakeDrop.set(DoubleSolenoid.Value.kForward);
-    }
+    // if (mainDriveController.getLeftTriggerAxis() > 0.5) {
+    // intakeDrop.set(DoubleSolenoid.Value.kReverse);
+    // } else {
+    // intakeDrop.set(DoubleSolenoid.Value.kForward);
+    // }
 
     // lightstrip
 
