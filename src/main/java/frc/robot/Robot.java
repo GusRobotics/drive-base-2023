@@ -9,35 +9,37 @@ package frc.robot;
 // import java.lang.Math;
 
 // import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.networktables.GenericEntry;
-import edu.wpi.first.wpilibj.AnalogInput;
-import edu.wpi.first.wpilibj.Compressor;
-import edu.wpi.first.wpilibj.PneumaticsModuleType;
-import edu.wpi.first.wpilibj.DoubleSolenoid;
+// import edu.wpi.first.math.controller.PIDController;
+// import edu.wpi.first.networktables.GenericEntry;
+// import edu.wpi.first.wpilibj.AnalogInput;
+// import edu.wpi.first.wpilibj.Compressor;
+// import edu.wpi.first.wpilibj.PneumaticsModuleType;
+// import edu.wpi.first.wpilibj.DoubleSolenoid;
 
-import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-//import edu.wpi.first.wpilibj2.command.PIDCommand;
+// import edu.wpi.first.wpilibj.TimedRobot;
+// import edu.wpi.first.wpilibj.Timer;
+// import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+// import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+// //import edu.wpi.first.wpilibj2.command.PIDCommand;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
-import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
-import edu.wpi.first.wpilibj.motorcontrol.Spark;
+// import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+// import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
+// import edu.wpi.first.wpilibj.motorcontrol.Spark;
 
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+// import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+// import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 
-import java.util.Map;
+// import java.util.Map;
 
 // import com.ctre.phoenix.sensors.BasePigeon;
 // import com.ctre.phoenix.sensors.Pigeon2;
-import com.ctre.phoenix.sensors.PigeonIMU;
+// import com.ctre.phoenix.sensors.PigeonIMU;
 //import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.revrobotics.CANSparkMax;
 //import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
+import edu.wpi.first.wpilibj.TimedRobot;
 
 //import edu.wpi.first.wpilibj.motorcontrol.PWMVictorSPX;
 
@@ -58,77 +60,77 @@ public class Robot extends TimedRobot {
   // Enum for controlling which mode is passed through to the drive control
 
   // Enum for controlling which autonomous is run
-  enum autos {
-    basic
-  }
+  // enum autos {
+  //   basic
+  // }
 
   // Loop iteration variables for time control
-  int k = 0;
-  int k_new = k;
+  // int k = 0;
+  // int k_new = k;
 
-  private autos selectedAuto;
+  // private autos selectedAuto;
 
-  private final SendableChooser<autos> m_chooser = new SendableChooser<>();
+  // private final SendableChooser<autos> m_chooser = new SendableChooser<>();
 
-  // motor initialization
+  // // motor initialization
 
-  // base motors
-  CANSparkMax left1 = new CANSparkMax(9, MotorType.kBrushless);
-  CANSparkMax left2 = new CANSparkMax(11, MotorType.kBrushless);
-  CANSparkMax left3 = new CANSparkMax(15, MotorType.kBrushless);
-  CANSparkMax right1 = new CANSparkMax(10, MotorType.kBrushless);
-  CANSparkMax right2 = new CANSparkMax(4, MotorType.kBrushless);
-  CANSparkMax right3 = new CANSparkMax(7, MotorType.kBrushless);
+  // // base motors
+  // CANSparkMax left1 = new CANSparkMax(9, MotorType.kBrushless);
+  // CANSparkMax left2 = new CANSparkMax(11, MotorType.kBrushless);
+  // CANSparkMax left3 = new CANSparkMax(15, MotorType.kBrushless);
+  // CANSparkMax right1 = new CANSparkMax(10, MotorType.kBrushless);
+  // CANSparkMax right2 = new CANSparkMax(4, MotorType.kBrushless);
+  // CANSparkMax right3 = new CANSparkMax(7, MotorType.kBrushless);
 
-  MotorControllerGroup leftDrive = new MotorControllerGroup(left1, left2, left3);
-  MotorControllerGroup rightDrive = new MotorControllerGroup(right1, right2, right3);
+  // MotorControllerGroup leftDrive = new MotorControllerGroup(left1, left2, left3);
+  // MotorControllerGroup rightDrive = new MotorControllerGroup(right1, right2, right3);
 
-  Timer timer = new Timer();
+  // Timer timer = new Timer();
 
-  // CANSparkMax arm = new CANSparkMax(13, MotorType.kBrushless);
-  float armLL = -10;
-  float armUL = 15;
+  // // CANSparkMax arm = new CANSparkMax(13, MotorType.kBrushless);
+  // float armLL = -10;
+  // float armUL = 15;
 
-  // CANSparkMax rotIn = new CANSparkMax(12, MotorType.kBrushless);
-  float wristLL = 0;
-  float wristUL = 9;
+  // // CANSparkMax rotIn = new CANSparkMax(12, MotorType.kBrushless);
+  // float wristLL = 0;
+  // float wristUL = 9;
 
-  // lightstrip/blinkin
-  Spark lightstrip = new Spark(2);
+  // // lightstrip/blinkin
+  // Spark lightstrip = new Spark(2);
 
-  // controllers
+  // // controllers
   XboxController mainDriveController = new XboxController(0);
-  XboxController coDriver = new XboxController(1);
+  // XboxController coDriver = new XboxController(1);
 
-  // module refers to pcm --> always 2 unless we need a second one ig
-  Compressor compressor = new Compressor(2, PneumaticsModuleType.REVPH);
-  DoubleSolenoid driveShift = new DoubleSolenoid(2, PneumaticsModuleType.REVPH, 7, 3);
-  // DoubleSolenoid shooter = new DoubleSolenoid(2, PneumaticsModuleType.REVPH, 1,
-  // 2);
-  // DoubleSolenoid intakeDrop = new DoubleSolenoid(2, PneumaticsModuleType.REVPH,
-  // 4, 5);
+  // // module refers to pcm --> always 2 unless we need a second one ig
+  // Compressor compressor = new Compressor(2, PneumaticsModuleType.REVPH);
+  // DoubleSolenoid driveShift = new DoubleSolenoid(2, PneumaticsModuleType.REVPH, 7, 3);
+  // // DoubleSolenoid shooter = new DoubleSolenoid(2, PneumaticsModuleType.REVPH, 1,
+  // // 2);
+  // // DoubleSolenoid intakeDrop = new DoubleSolenoid(2, PneumaticsModuleType.REVPH,
+  // // 4, 5);
 
-  PigeonIMU pigeon = new PigeonIMU(10);
+  // PigeonIMU pigeon = new PigeonIMU(10);
 
   // CANSparkMax intake = new CANSparkMax(36, MotorType.kBrushless);
 
   // set lightstrip colors
 
-  boolean lights = false;
-  double color_val;
+  // boolean lights = false;
+  // double color_val;
 
-  // PID Control Initialization
-  double kP = 0;
-  double kD = 0;
-  PIDController theLoop = new PIDController(kP, 0, kD);
+  // // PID Control Initialization
+  // double kP = 0;
+  // double kD = 0;
+  // PIDController theLoop = new PIDController(kP, 0, kD);
 
-  // PID Control for various functions on the robot (arm, wrist, elevator)
-  // Will slow the input to the motors relative to the setpoints (set as
-  // softLimits)
-  PIDController functionsController = new PIDController(0.75, 0, -0.25);
+  // // PID Control for various functions on the robot (arm, wrist, elevator)
+  // // Will slow the input to the motors relative to the setpoints (set as
+  // // softLimits)
+  // PIDController functionsController = new PIDController(0.75, 0, -0.25);
 
-  AnalogInput distSensor = new AnalogInput(0);
-  double startPitch = 0;
+  // AnalogInput distSensor = new AnalogInput(0);
+  // double startPitch = 0;
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -136,25 +138,28 @@ public class Robot extends TimedRobot {
    * initialization code.
    */
 
+   CANSparkMax top = new CANSparkMax(12, MotorType.kBrushless);
+   CANSparkMax bottom = new CANSparkMax(36, MotorType.kBrushless);
+
   @Override
   public void robotInit() {
-    // Set the right drive to be inverted
-    rightDrive.setInverted(true);
+    // // Set the right drive to be inverted
+    // rightDrive.setInverted(true);
 
-    // Enable Compressor
-    compressor.enableAnalog(100, 120);
+    // // Enable Compressor
+    // compressor.enableAnalog(100, 120);
 
-    // Initialize shifting into low gear
-    // Note: kReverse is Low Gear
-    driveShift.set(Value.kReverse);
+    // // Initialize shifting into low gear
+    // // Note: kReverse is Low Gear
+    // driveShift.set(Value.kReverse);
 
-    // set current limits
-    left1.setSmartCurrentLimit(50);
-    left2.setSmartCurrentLimit(50);
-    left3.setSmartCurrentLimit(50);
-    right1.setSmartCurrentLimit(50);
-    right2.setSmartCurrentLimit(50);
-    right3.setSmartCurrentLimit(50);
+    // // set current limits
+    // left1.setSmartCurrentLimit(50);
+    // left2.setSmartCurrentLimit(50);
+    // left3.setSmartCurrentLimit(50);
+    // right1.setSmartCurrentLimit(50);
+    // right2.setSmartCurrentLimit(50);
+    // right3.setSmartCurrentLimit(50);
 
   }
 
@@ -176,15 +181,15 @@ public class Robot extends TimedRobot {
     // SmartDashboard.putNumber("Calculation",
     // theLoop.calculate(pigeonIMU.getPitch(), theLoop.getSetpoint()));
 
-    SmartDashboard.putNumber("left1", left1.getOutputCurrent());
-    SmartDashboard.putNumber("left2", left2.getOutputCurrent());
-    SmartDashboard.putNumber("left3", left3.getOutputCurrent());
-    SmartDashboard.putNumber("right1", right1.getOutputCurrent());
-    SmartDashboard.putNumber("right2", right2.getOutputCurrent());
-    SmartDashboard.putNumber("right3", right3.getOutputCurrent());
+    // SmartDashboard.putNumber("left1", left1.getOutputCurrent());
+    // SmartDashboard.putNumber("left2", left2.getOutputCurrent());
+    // SmartDashboard.putNumber("left3", left3.getOutputCurrent());
+    // SmartDashboard.putNumber("right1", right1.getOutputCurrent());
+    // SmartDashboard.putNumber("right2", right2.getOutputCurrent());
+    // SmartDashboard.putNumber("right3", right3.getOutputCurrent());
 
-    // Use this variable to track the number of 20 ms loops the robot has completed.
-    k++;
+    // // Use this variable to track the number of 20 ms loops the robot has completed.
+    // k++;
 
   }
 
@@ -208,183 +213,6 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
 
-    timer.reset();
-    timer.start();
-    // Get the selected auto
-    selectedAuto = m_chooser.getSelected();
-    System.out.println("Auto selected:" + selectedAuto);
-    // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
-    // SmartDashboard.putNumber("Encoder", encoderImu.getEncoder());
-    // System.out.println("Auto selected: " + m_autoSelected);
-
-    // switch (m_autoSelected);
-
-  }
-
-  /** This function is called periodically during autonomous. */
-  @Override
-  public void autonomousPeriodic() {
-    // switch (m_autoSelected) {
-    // // case kleftAuto:
-    // }
-
-    // SmartDashboard.putNumber("left1", left1.getOutputCurrent());
-    // SmartDashboard.putNumber("left2", left2.getOutputCurrent());
-    // SmartDashboard.putNumber("left3", left3.getOutputCurrent());
-    // SmartDashboard.putNumber("right1", right1.getOutputCurrent());
-    // SmartDashboard.putNumber("right2", right2.getOutputCurrent());
-    // SmartDashboard.putNumber("right3", right3.getOutputCurrent());
-
-    // double seconds = timer.get();
-
-    // intake.set(0);
-    rightDrive.set(0);
-    leftDrive.set(0);
-
-    // // intake run in reverse for a second
-    // // GOOD AUTO: drive foreward at .21 for 2.75 sec,
-    // // stop for 1.75 sec
-    // // foreward for 3.85 sec at .15
-    // // GOOD AUTO BELOW
-
-    // AUTO NUMBER ONE BEGINS
-    // if (timer.get() < 1.5) {
-    // intakeDrop.set(DoubleSolenoid.Value.kReverse);
-    // // might need to switch value depending on command
-    // } else if (timer.get() < 2) {
-    // shooter.set(DoubleSolenoid.Value.kReverse);
-    // } else if (timer.get() < 3.5) {
-    // shooter.set(DoubleSolenoid.Value.kForward);
-    // } else if (timer.get() < 5) {
-    // intakeDrop.set(DoubleSolenoid.Value.kReverse);
-    // // // 4.25 sec at .4, .25 stop, 2 .4 backwards
-    // } else if (timer.get() < 6.3) {
-    // leftDrive.set(-.55);
-    // rightDrive.set(0.55);
-    // } else if (timer.get() < 9) {
-    // leftDrive.set(0);
-    // rightDrive.set(0);
-    // } else if (timer.get() < 10.15) {
-    // leftDrive.set(-0.4);
-    // rightDrive.set(0.4);
-    // } else {
-    // timer.stop();
-    // leftDrive.set(0);
-    // rightDrive.set(0);
-    // }
-    // AUTO NUMBER ONE ENDS
-
-    // while (timer.get() <= 1.6) {
-    // leftDrive.set(.3);
-    // rightDrive.set(-.3);
-    // }
-    // // // speed slowed down after 1.6 seconds but before 2.75 seconds
-    // while (timer.get() > 1.6 && timer.get() <= 3.6) {
-    // leftDrive.set(.1);
-    // rightDrive.set(-.2);
-    // }
-
-    // /*
-    // * left1.set(pid.calculate(90, encoderImu.getYawPitchRoll(null));
-    // * left2.set(pid.calculate(90, encoderImu.getDistance()));
-    // * left3.set(pid.calculate(90, encoderImu.getDistance()));
-    // * right1.set(pid.calculate(90, encoderImu.getDistance()));
-    // * right2.set(pid.calculate(90, encoderImu.getDistance));
-    // * right3.set(pid.calculate(90, encoderImu.getDistance));
-    // */
-
-    // AUTO NUMBER TWO BEGINS
-    if (timer.get() < 1.5) {
-      // intakeDrop.set(DoubleSolenoid.Value.kReverse);
-    } else if (timer.get() < 2) {
-      // shooter.set(DoubleSolenoid.Value.kReverse);
-    } else if (timer.get() < 3.5) {
-      // shooter.set(DoubleSolenoid.Value.kForward);
-    } else if (timer.get() < 4) {
-      // intakeDrop.set(DoubleSolenoid.Value.kReverse);
-    } else if (timer.get() < 8) {
-      // intake.set(.9);
-      leftDrive.set(-.5);
-      rightDrive.set(0.5);
-    } else if (timer.get() < 8.7) {
-      // intake.set(.9);
-    } else if (timer.get() < 9.5) {
-      // intake.set(0);
-    } else if (timer.get() < 12.5) {
-      // intakeDrop.set(DoubleSolenoid.Value.kForward);
-      leftDrive.set(.6);
-      rightDrive.set(-.6);
-    } else if (timer.get() < 13.25) {
-      leftDrive.set(0);
-      rightDrive.set(0);
-    } else if (timer.get() < 13.85) {
-      leftDrive.set(.8);
-      rightDrive.set(.8);
-    } else if (timer.get() < 13.9) {
-      leftDrive.set(0);
-      rightDrive.set(0);
-    } else if (timer.get() < 14.4) {
-      // intake.set(-0.9);
-    } else if (timer.get() < 14.9) {
-      // intake.set(0);
-      leftDrive.set(-0.5);
-      rightDrive.set(0.5);
-    } else {
-      timer.stop();
-      leftDrive.set(0);
-      rightDrive.set(0);
-    }
-    // AUTO NUMBER TWO ENDS
-
-    // AUTO NUMBER THREE BEGINS
-    // if (timer.get() < 1.5) {
-    // intakeDrop.set(DoubleSolenoid.Value.kReverse);
-    // } else if (timer.get() < 2) {
-    // shooter.set(DoubleSolenoid.Value.kReverse);
-    // } else if (timer.get() < 3.5) {
-    // shooter.set(DoubleSolenoid.Value.kForward);
-    // } else if (timer.get() < 3.75) {
-    // intakeDrop.set(DoubleSolenoid.Value.kReverse);
-    // } else if (timer.get() < 7.75) {
-    // intake.set(.9);
-    // leftDrive.set(-.5);
-    // rightDrive.set(0.5);
-    // } else if (timer.get() < 8.55) {
-    // intake.set(.9);
-    // } else if (timer.get() < 9.25) {
-    // intake.set(0);
-    // } else if (timer.get() < 9.82) {
-    // leftDrive.set(.8);
-    // rightDrive.set(.8);
-    // } else if (timer.get() < 12.82) {
-    // intakeDrop.set(DoubleSolenoid.Value.kForward);
-    // leftDrive.set(-.9);
-    // rightDrive.set(.9);
-    // } else if (timer.get() < 13.5) {
-    // intake.set(-.9);
-    // //BELOW TABBED STAYS COMMENTED
-    // // } else if (timer.get() < 13) {
-    // // leftDrive.set(0);
-    // // rightDrive.set(0);
-    // // } else if (timer.get() < 13.6) {
-    // // leftDrive.set(.8);
-    // // rightDrive.set(.8);
-    // // } else if (timer.get() < 13.65) {
-    // // leftDrive.set(0);
-    // // rightDrive.set(0);
-    // // } else if (timer.get() < 14.14) {
-    // // intake.set(-0.9);
-    // // } else if (timer.get() < 14.65) {
-    // // intake.set(0);
-    // // leftDrive.set(-0.5);
-    // // rightDrive.set(0.5);
-    // //ABOVE TABBED STAY COMMENTED
-    // } else {
-    // timer.stop();
-    // leftDrive.set(0);
-    // rightDrive.set(0);
-    // }
-    // AUTO THREE ENDS
   }
 
   // spin at tend and do it when we grab the cube
@@ -399,64 +227,20 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    // for encoder rotations use spark.getEncoder.getPosition()
-    // good drive function
-    if (mainDriveController.getLeftY() >= 0.1 || mainDriveController.getLeftY() <= -0.1) {
-      leftDrive.set(mainDriveController.getLeftY() / 1.2);
-    } else {
-      leftDrive.set(0);
-    }
-
-    if (mainDriveController.getRightY() >= 0.1 || mainDriveController.getRightY() <= -0.1) {
-      rightDrive.set(-mainDriveController.getRightY() / 1.3);
-    } else {
-      rightDrive.set(0);
-    }
-
-    // if the codriver has their button pressed, you can intake when the sensor
-    // isn't triggered or when the main is pressing too
-    if (coDriver.getLeftTriggerAxis() > 0.5) {
-      if (distSensor.getValue() < 280 || mainDriveController.getRightBumper()) {
-        // intake.set(.9);
-      }
-      // else if(sensor >= sensor threshold){
-      // intake.set(0);
-      // }
-      else {
-        // intake.set(0);
-      }
-    } else if (coDriver.getRightTriggerAxis() > 0.5) {
-      // intake.set(-1);
-    } else {
-      // intake.set(0);
-    }
-
-    // if we need toggle
-    // if (mainDriveController.getRightBumper() && k - k_new >= 50) {
-    // driveShift.toggle();
-    // k_new = k;
-    // }
-
-    if (mainDriveController.getRightTriggerAxis() > 0.5) {
-      driveShift.set(DoubleSolenoid.Value.kForward);
-    } else {
-      driveShift.set(DoubleSolenoid.Value.kReverse);
-    }
-
-    // if (coDriver.getRightBumper()) {
-    // shooter.set(DoubleSolenoid.Value.kReverse);
+    // if(mainDriveController.getLeftBumperPressed()){
+    //   top.set(0.5);
+    //   bottom.set(0.5);
     // } else {
-    // shooter.set(DoubleSolenoid.Value.kForward);
+    //   top.set(0);
+    //   bottom.set(0);
     // }
-
-    // if (mainDriveController.getLeftTriggerAxis() > 0.5) {
-    // intakeDrop.set(DoubleSolenoid.Value.kReverse);
-    // } else {
-    // intakeDrop.set(DoubleSolenoid.Value.kForward);
-    // }
-
-    // lightstrip
-
+    if(mainDriveController.getRightY() > 0.1){
+      top.set(-0.75);
+      bottom.set(-0.75);
+    } else{
+      bottom.set(0);
+      top.set(0);
+    }
   }
 
   /** This function is called once when the robot is disabled. */
@@ -475,8 +259,8 @@ public class Robot extends TimedRobot {
   public void testInit() {
 
     // Reset and start the timer
-    timer.reset();
-    timer.start();
+    // timer.reset();
+    // timer.start();
 
     // elevator.setIdleMode(IdleMode.kBrake);
     // intake.setIdleMode(IdleMode.kCoast);
@@ -484,34 +268,34 @@ public class Robot extends TimedRobot {
     dashboardInitialize();
 
     // Initialize gear state (Low)
-    driveShift.set(Value.kReverse);
+    // driveShift.set(Value.kReverse);
 
     // Initialize PID Loop & Pigeon Readings
     // startPitch = pigeonIMU.getPitch();
 
     // Allows a choice for kP, kD coefficients in the diagnostics tab of the
     // shuffleboard view
-    GenericEntry kpentry = Shuffleboard.getTab("Diagnostics")
-        .add("kP", 0)
-        .withWidget(BuiltInWidgets.kNumberSlider)
-        .withProperties(Map.of("min", 0, "max", 1))
-        .getEntry();
+    // GenericEntry kpentry = Shuffleboard.getTab("Diagnostics")
+    //     .add("kP", 0)
+    //     .withWidget(BuiltInWidgets.kNumberSlider)
+    //     .withProperties(Map.of("min", 0, "max", 1))
+    //     .getEntry();
 
-    GenericEntry kdentry = Shuffleboard.getTab("Diagnostics")
-        .add("kD", 0)
-        .withWidget(BuiltInWidgets.kNumberSlider)
-        .withProperties(Map.of("min", -2, "max", 0))
-        .getEntry();
+    // GenericEntry kdentry = Shuffleboard.getTab("Diagnostics")
+    //     .add("kD", 0)
+    //     .withWidget(BuiltInWidgets.kNumberSlider)
+    //     .withProperties(Map.of("min", -2, "max", 0))
+    //     .getEntry();
 
-    kP = kpentry.getDouble(0);
-    kD = kdentry.getDouble(0);
+    // kP = kpentry.getDouble(0);
+    // kD = kdentry.getDouble(0);
 
-    theLoop.setP(kP);
-    theLoop.setD(kD);
+    // theLoop.setP(kP);
+    // theLoop.setD(kD);
 
-    theLoop.setSetpoint(startPitch);
-    theLoop.setTolerance(5);
-    theLoop.enableContinuousInput(-15, 15);
+    // theLoop.setSetpoint(startPitch);
+    // theLoop.setTolerance(5);
+    // theLoop.enableContinuousInput(-15, 15);
 
     // SmartDashboard.putNumber("Pitch", pigeonIMU.getPitch());
     // SmartDashboard.putNumber("Calculation",
@@ -529,20 +313,6 @@ public class Robot extends TimedRobot {
   @Override
   public void testPeriodic() {
 
-    // dashboardUpdate();
-
-    // driverControls(driveMode.twinArcade);
-
-    // Small test implementation for the PID loop:
-    // Activate PID Loop
-    // if (mainDriveController.getLeftTriggerAxis() >= 0.05) {
-    // leftDrive.set(0.75 * theLoop.calculate(pigeonIMU.getPitch(),
-    // theLoop.getSetpoint()));
-    // rightDrive.set(0.75 * theLoop.calculate(pigeonIMU.getPitch(),
-    // theLoop.getSetpoint()));
-    // }
-
-    // intake
 
   }
 
@@ -563,97 +333,17 @@ public class Robot extends TimedRobot {
    * @return
    */
 
-  /*
-   * 1. display the encoder values on the smartdashboard
-   * 2. set to go based on rotations (w pid loop, just p) CART TEST
-   * 3. if the first test is ok, test on ground and emergency stop when needed
-   * 4. test generalizing p value at different distances, etc
-   * if problems with precision, add in other elements NOT IF UNNECESSARY
-   * INTEGRAL WHEN YOU NEED TO BUILD POWER, DERIVATIVE FOR WHEN IT ACCELERATES TOO
-   * FAST
-   * pid allowable error: don't go for perfect precision, find margain of error
-   * if you want higher precision, that'll happen over many more actions, but will
-   * be more exact
-   * --> precision versus time
-   */
-
-  // Method which contains all of the driver control information,
-
-  // private void driverControls(driveMode mode) {
-
-  // // Drive Controls
-  // // Switch cases to accomodate for different driving input modes (tank,
-  // arcade)
-  // switch (mode) {
-  // case tank:
-  // driveTrain.tankDrive(adjustForDeadband(mainDriveController.getLeftY(), 0.05),
-  // adjustForDeadband(mainDriveController.getRightY(), 0.05));
-  // break;
-  // case twinArcade:
-  // driveTrain.arcadeDrive(-0.625 *
-  // adjustForDeadband(mainDriveController.getRightX(), 0.05),
-  // -0.625 * adjustForDeadband(mainDriveController.getLeftY(),
-  // 0.05));
-  // break;
-  // }
-
-  // // intake
-  // if (isInputting(coDriver.getLeftTriggerAxis(), 0.05)) {
-  // intake.set(-0.40);
-  // } else if (isInputting(coDriver.getRightTriggerAxis(), 0.05)) {
-  // intake.set(0.40);
-  // } else {
-  // intake.set(0);
-  // }
-
-  // // arm extension
-  // // if (mainDriveController.getXButtonPressed()) {
-  // // arm.set(-0.5);
-  // // } else if (mainDriveController.getBButtonPressed()) {
-  // // arm.set(0.5);
-  // // } else {
-  // // arm.set(0);
-  // // }
-
-  // }
-
-  // Runs a motor until it gets to the setpoint using a PID Loop.
-  // private void toSetpoint(double setPoint, CANSparkMax toControl) {
-
-  // toControl.set(functionsController.calculate(setPoint -
-  // toControl.getEncoder()));
-
-  // }
-
-  // A simple method to determine whether or not a particular axis is meant to
-  // input
-  // private boolean isInputting(double inputAxis, double deadband) {
-  // if (adjustForDeadband(inputAxis, deadband) != 0) {
-  // return true;
-  // }
-  // return false;
-  // }
-
-  // Adjusts an input for a particular deadband. Use this to combat input
-  // (controller, joystick, etc.) drift.
-  // private double adjustForDeadband(double input, double deadband) {
-  // if (Math.abs(input) < deadband) {
-  // return 0;
-  // }
-  // return input;
-  // }
-
   // Used for SmartDashboard, periodically update entries.
   // This may not be necessary depending on whether or not SmartDashboard
   // already updates items in the background...
   private void dashboardInitialize() {
 
-    SmartDashboard.putNumber("left1", left1.getOutputCurrent());
-    SmartDashboard.putNumber("left2", left2.getOutputCurrent());
-    SmartDashboard.putNumber("left3", left3.getOutputCurrent());
-    SmartDashboard.putNumber("right1", right1.getOutputCurrent());
-    SmartDashboard.putNumber("right2", right2.getOutputCurrent());
-    SmartDashboard.putNumber("right3", right3.getOutputCurrent());
+    // SmartDashboard.putNumber("left1", left1.getOutputCurrent());
+    // SmartDashboard.putNumber("left2", left2.getOutputCurrent());
+    // SmartDashboard.putNumber("left3", left3.getOutputCurrent());
+    // SmartDashboard.putNumber("right1", right1.getOutputCurrent());
+    // SmartDashboard.putNumber("right2", right2.getOutputCurrent());
+    // SmartDashboard.putNumber("right3", right3.getOutputCurrent());
 
     // SmartDashboard.putNumber("Pitch", pigeonIMU.getPitch());
     // SmartDashboard.putNumber("Calculation",
@@ -661,97 +351,4 @@ public class Robot extends TimedRobot {
 
   }
 
-  // Initializes Shuffleboard entries
-  // todo: FIX THIS! -> Shuffleboard calls PID loop before initialization when put
-  // where it should be (RobotInit)
-  // private void shuffleboardInitialize() {
-
-  // // Sets up options for autonomous
-  // m_chooser.setDefaultOption("Basic Auto", autos.basic);
-  // // m_chooser.addOption("Basic Auto", autos.basic);
-
-  // // This tab contains all data particular to diagnosing problems on the robot
-  // // Shuffleboard.getTab("SmartDashboard")
-  // // .addPersistent("Auto Choice", m_chooser);
-
-  // Shuffleboard.getTab("Diagnostics")
-  // .add("Pitch", pigeonIMU.getPitch());
-
-  // Shuffleboard.getTab("Diagnostics")
-  // .add("Calculation", theLoop.calculate(pigeonIMU.getPitch(),
-  // theLoop.getSetpoint()));
-
-  // Shuffleboard.getTab("Diagnostics")
-  // .add("left1", left1.getOutputCurrent());
-
-  // Shuffleboard.getTab("Diagnostics")
-  // .add("left2", left2.getOutputCurrent());
-
-  // Shuffleboard.getTab("Diagnostics")
-  // .add("left3", left3.getOutputCurrent());
-
-  // Shuffleboard.getTab("Diagnostics")
-  // .add("right1", right1.getOutputCurrent());
-
-  // Shuffleboard.getTab("Diagnostics")
-  // .add("right2", right2.getOutputCurrent());
-
-  // Shuffleboard.getTab("Diagnostics")
-  // .add("right3", right3.getOutputCurrent());
-
-  // Shuffleboard.getTab("Diagnostics")
-  // .add("Arm Rotations", arm.getEncoder());
-
-  // Shuffleboard.getTab("Diagnostics")
-  // .add("Elevator Rotations", elevator.getEncoder());
-
-  // Shuffleboard.getTab("Diagnostics")
-  // .add("Wrist Rotations", rotIn.getEncoder());
-
-  // // Runs the camera server
-  // Shuffleboard.getTab("SmartDashboard").add(CameraServer.startAutomaticCapture(1));
-
-  // Shuffleboard.startRecording();
-
-  // }
-
 }
-/*
- * 
- * 
- * 2.003ms = full "forward"
- * 1.550ms = the "high end" of the deadband range
- * 1.500ms = center of the deadband range (off)
- * 1.460ms = the "low end" of the deadband range
- * 0.999ms = full "reverse"
- * 
- * public class PWMSparkMax extends PWMMotorController {
- * /**
- * //METHODS !!
- * public PWMSparkMax(final int channel) {
- * super("PWMSparkMax", channel);
- * m_pwm.setBounds(2.003, 1.55, 1.50, 1.46, 0.999);
- * m_pwm.setPeriodMultiplier(PWM.PeriodMultiplier.k1X);
- * m_pwm.setSpeed(0.0);
- * m_pwm.setZeroLatch();
- * }
- * 
- * //MORE METHODS SO YOU CAN ACTUALLY USE THE STUFF ABOVE
- * 
- * public void setBounds​(double max, double deadbandMax, double center, double
- * deadbandMin, double min)
- * 
- * //Pneumatics
- * (We'll need to know where we're using them before we can use this code
- * without errors)
- * 
- * //Imports for pneumatics
- * import edu.wpi.first.wpilibj.PneumaticsModuleType;
- * import edu.wpi.first.wpilibj.Solenoid;
- * 
- * public class (whatever part we're using)
- * {
- * nameForWhateverItDoes = new Solenoid(config.pcm_ID,
- * PneumaticsModuleType.CTREPCM, config.intake_channel);
- * }
- */
