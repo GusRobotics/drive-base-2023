@@ -236,7 +236,7 @@ public class Robot extends TimedRobot {
     // }
     if(mainDriveController.getRightY() > 0.1){
       top.set(-0.75);
-      bottom.set(-0.75);
+      bottom.set(-0.7);
     } else{
       bottom.set(0);
       top.set(0);
